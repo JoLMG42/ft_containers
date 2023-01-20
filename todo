@@ -3,7 +3,6 @@ vector::begin
 vector::end
 vector::erase
 vector::insert
-vector::operator=
 vector::rbegin
 vector::rend
 non-member overloads

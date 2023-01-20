@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 13:01:07 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/01/19 19:15:28 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/01/20 12:02:39 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -337,4 +337,25 @@ int	main(void)
 	std::cout << std::endl;
 	std::cout << "FT empty: " << real.empty() << std::endl;
 	
+	std::cout << std::endl;
+	std::cout << "---------- END empty test ----------" << std::endl;
+
+	std::cout << std::endl;
+	std::cout << std::endl;
+	std::cout << std::endl;
+	std::cout << std::endl;
+
+	for (size_t i = 0; i < 5; ++i)
+	{
+		int nb = (rand() % (1000 + 1));
+		real.push_back(nb);
+		ft.push_back(nb);
+	}
+
+	std::cout << "---------- START begin test ----------" << std::endl;
+	std::cout << std::endl;
+
+	std::cout << *real.begin() << "\n";
+	
+		
 }

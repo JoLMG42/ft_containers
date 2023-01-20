@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 12:28:54 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/01/19 19:13:39 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/01/20 11:53:11 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,9 @@ class vector
 			{ return (_tab[idx]);}
 		T & operator[](size_type idx) const
 			{ return (_tab[idx]);}
+		T & operator=(const vector & egal)
+			{ _tab = egal._tab; _size = egal._size; _capacity = egal.capacity; _alloc = egal._alloc;
+				return *this;}
 
 		size_type	size(void) const;
 		size_type	max_size(void) const;
