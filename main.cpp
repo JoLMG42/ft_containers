@@ -6,11 +6,14 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 13:01:07 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/01/20 12:02:39 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/01/23 17:23:38 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "vector.hpp"
+#include "vector_iterator.hpp"
+#include "iterator_traits.hpp"
+#include <iterator>
 #include <iostream>
 #include <vector>
 
@@ -345,17 +348,16 @@ int	main(void)
 	std::cout << std::endl;
 	std::cout << std::endl;
 
-	for (size_t i = 0; i < 5; ++i)
-	{
-		int nb = (rand() % (1000 + 1));
-		real.push_back(nb);
-		ft.push_back(nb);
-	}
-
-	std::cout << "---------- START begin test ----------" << std::endl;
-	std::cout << std::endl;
-
-	std::cout << *real.begin() << "\n";
-	
-		
+	std::cout << "---------- START ITERATOR TEST ----------" << std::endl;
+	std::vector<int> toto(1, 1);
+	ft::vector<int> lala(1, 1);
+	toto.push_back(5);
+	toto.push_back(6);
+	toto.push_back(7);
+	lala.push_back(5);
+	lala.push_back(6);
+	lala.push_back(7);
+	std::vector<int>::iterator rit = toto.begin();
+	ft::vector<int>::iterator ftit = lala.begin();
+	ft::vector<int>::iterator ftit2(ftit);
 }

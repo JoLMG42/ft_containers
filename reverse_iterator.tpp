@@ -20,6 +20,12 @@ reverse_iterator<Iterator>::reverse_iterator(iterator_type it)
 }
 
 template <class Iterator>
+reverse_iterator<Iterator>::reverse_iterator(const reverse_iterator<Iterator> &cpy)
+{
+	_it = cpy._it;
+}
+
+template <class Iterator>
 typename reverse_iterator<Iterator>::iterator_type reverse_iterator<Iterator>::base(void) const
 {
 	return _it;

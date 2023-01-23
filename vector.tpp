@@ -213,6 +213,7 @@ void vector<T, Alloc>::swap(vector<T, Alloc>& x)
 	x._size = tmp_size;
 	x._capacity = tmp_capacity;
 	x._alloc = tmp_alloc;
+
 }
 }
 #endif

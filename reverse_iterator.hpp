@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 12:41:15 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/01/20 22:41:51 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/01/23 14:24:46 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ class	reverse_iterator
 
 		reverse_iterator(void);
 		reverse_iterator(iterator_type it);
+		reverse_iterator(const reverse_iterator<Iterator> &cpy);
 		iterator_type	 base(void) const;
 		
 		reference 	 &operator*(void) const;
