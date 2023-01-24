@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 12:28:54 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/01/23 18:31:01 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/01/24 18:46:03 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 #define VECTOR_HPP
 
 #include <memory>
-#include "vector_iterator.hpp"
 #include <iterator>
 #include <cstddef>
 #include <iostream>
@@ -57,9 +56,9 @@ class vector
 				vector_iterator operator--(int)
 				{ vector_iterator tmp(*this); _ptr--; return tmp; }
 				vector_iterator operator-(difference_type n) const
-				{ vector_iterator tmp(*this); tmp._ptr -= n; return (tmp); }
+				{ vector_iterator tmp(*this); tmp._ptr = tmp._ptr - n; return (tmp); }
 				vector_iterator &operator+=(difference_type n)
-				{ _ptr += n; return (*this); }
+				{ _ptr = _ptr + n; return (*this); }
 				vector_iterator &operator-=(difference_type n)
 				{ _ptr -= n; return (*this); }
 				difference_type operator-(vector_iterator const& b) const
@@ -121,9 +120,61 @@ class vector
 		T &	back(void) const;
 		bool	empty(void) const;
 		typedef vector_iterator<T> iterator;
+		typedef vector_iterator<const T> const_iterator;
 
 		iterator begin(void)
 		{ return (iterator(&_tab[0])); }
+		iterator end(void)
+		{ return (iterator(&_tab[_size])); }
+		iterator erase (iterator position)
+		{
+			_size--;
+			iterator end = this->end();
+			iterator tmp(position);
+			_alloc.destroy(position.operator->());
+			while (tmp != end)
+			{
+				_alloc.construct(tmp.operator->(), *(tmp + 1));
+				tmp++;
+				_alloc.destroy(tmp.operator->());
+			}
+			return (position);
+		}
+		iterator erase (iterator first, iterator last)
+		{
+			iterator end = this->end();
+			iterator tmp1(first);
+			iterator tmp2(last);
+			_alloc.destroy(first.operator->());
+			_alloc.destroy(last.operator->());
+			while (tmp1 != last)
+			{
+				_alloc.construct(tmp1.operator->(), *(tmp1 + 1));
+				tmp1++;
+				_alloc.destroy(tmp1.operator->());
+			}
+			return (first);
+		}
+		iterator insert (iterator position, const value_type& val)
+		{
+			_size++;
+			iterator beg = this->begin();
+			_alloc.construct(beg.operator->(), *(beg));
+			_alloc.destroy(beg.operator->());
+			for (; beg != position; ++beg)
+			{
+				_alloc.construct(beg.operator->(), *(beg));
+				_alloc.destroy(beg.operator->());
+			}
+			_alloc.construct(beg.operator->(), val);
+			beg++;
+			for (; beg != this->end(); beg++)
+			{
+				_alloc.construct(beg.operator->(), *(beg));
+				_alloc.destroy(beg.operator->());
+			}
+			return (position);
+		}
 
 	private:
 		value_type	*_tab;

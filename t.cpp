@@ -79,10 +79,24 @@ int	main(void)
 	std::cout << "FT: " << *it << std::endl;
 	std::cout << std::endl;
 	std::cout << "-=: " << std::endl;
-	rev -= 9;
-	it -= 9;
+	rev -= 1;
+	it -= 1;
 	std::cout << "REAL: " << *rev << std::endl;
 	std::cout << "FT: " << *it << std::endl;
+	std::cout << std::endl;
+	int i = 0;
+	while (lala[i])
+	{
+		std::cout << lala[i] << std::endl;
+		i++;
+	}
+	std::cout << std::endl;
+	i = 0;
+	while (toto[i])
+	{
+		std::cout << toto[i] << std::endl;
+		i++;
+	}
 	std::cout << std::endl;
 	std::cout << "+=: " << std::endl;
 	rev += 1;
@@ -183,8 +197,8 @@ int	main(void)
 	std::cout << "REAL: " << *rev << std::endl;
 	std::cout << "FT: " << *it << std::endl;
 	std::cout << "n + rhs: " << std::endl;
-	rev = 23 + rev;
-	it = 23 + it;
+	rev = 2 + rev;
+	it = 2 + it;
 	std::cout << "REAL: " << *rev << std::endl;
 	std::cout << "FT: " << *it << std::endl;
 
@@ -195,7 +209,4 @@ int	main(void)
 	std::cout << std::endl;
 	std::cout << std::endl;
 	std::cout << std::endl;
-
-	
-	
 }
