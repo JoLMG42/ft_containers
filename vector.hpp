@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 12:28:54 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/01/24 18:46:03 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/01/25 20:01:41 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,9 @@
 #include <iterator>
 #include <cstddef>
 #include <iostream>
+#include <cstdlib>
 #include "iterator_traits.hpp"
+#include "reverse_iterator.hpp"
 
 namespace ft
 {
@@ -121,11 +123,21 @@ class vector
 		bool	empty(void) const;
 		typedef vector_iterator<T> iterator;
 		typedef vector_iterator<const T> const_iterator;
+		typedef ft::reverse_iterator<iterator> reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
 		iterator begin(void)
 		{ return (iterator(&_tab[0])); }
 		iterator end(void)
 		{ return (iterator(&_tab[_size])); }
+		reverse_iterator rbegin(void)
+		{ return (reverse_iterator(&_tab[_size])); }
+		const_reverse_iterator rbegin(void) const
+		{ return (const_reverse_iterator(&_tab[_size])); }
+		reverse_iterator rend(void)
+		{ return (reverse_iterator(&_tab[0])); }
+		const_reverse_iterator rend(void) const
+		{ return (const_reverse_iterator(&_tab[0])); }
 		iterator erase (iterator position)
 		{
 			_size--;
@@ -142,37 +154,58 @@ class vector
 		}
 		iterator erase (iterator first, iterator last)
 		{
-			iterator end = this->end();
+			//iterator begin = this->begin();
+		//	iterator end = this->end();
 			iterator tmp1(first);
-			iterator tmp2(last);
-			_alloc.destroy(first.operator->());
-			_alloc.destroy(last.operator->());
+			int i = 0;
 			while (tmp1 != last)
 			{
-				_alloc.construct(tmp1.operator->(), *(tmp1 + 1));
+				i++;
+				_alloc.destroy(tmp1.operator->());
+				tmp1++;
+			}
+			tmp1 = first;
+			while (tmp1 != this->end())
+			{
+			//	std::cout << "TMP: " << *tmp1 << "\n";
+				_alloc.construct(tmp1.operator->(), *(tmp1 + i));
 				tmp1++;
 				_alloc.destroy(tmp1.operator->());
 			}
+			_size -= i;
+			//first = tmp1;
 			return (first);
 		}
 		iterator insert (iterator position, const value_type& val)
 		{
 			_size++;
 			iterator beg = this->begin();
-			_alloc.construct(beg.operator->(), *(beg));
-			_alloc.destroy(beg.operator->());
-			for (; beg != position; ++beg)
+			_alloc.construct(beg.operator->(), *beg);
+			size_t pos = position - this->begin();
+			size_t j = 0;
+			for (size_t i = 0; i < pos; i++)
 			{
-				_alloc.construct(beg.operator->(), *(beg));
-				_alloc.destroy(beg.operator->());
+				std::cout << "BEG boucle: " << *beg << "\n";
+				_alloc.construct(&_tab[i], _tab[i - 1]);
+				_alloc.destroy(&_tab[i - 1]);
+				j = i;
 			}
-			_alloc.construct(beg.operator->(), val);
-			beg++;
-			for (; beg != this->end(); beg++)
+			//_alloc.destroy(beg..operator->());
+			//_alloc.destroy(beg.operator->());
+			//beg--;
+
+			_alloc.construct(&_tab[j], val);
+			/*while (beg != this->end())
 			{
-				_alloc.construct(beg.operator->(), *(beg));
-				_alloc.destroy(beg.operator->());
-			}
+				value = *beg;
+				_alloc.construct(beg.operator->(), value);
+				beg++;
+				//_alloc.construct(beg.operator->(), value);
+				std::cout << "BEG boucle 2222: " << *beg << "\n";
+		//		value = *beg;
+				//_alloc.construct(beg.operator->(), *(beg));
+				//_alloc.destroy(beg.operator->());
+			}*/
 			return (position);
 		}
 

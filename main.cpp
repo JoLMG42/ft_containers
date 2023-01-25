@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 13:01:07 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/01/24 18:43:59 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/01/25 20:03:23 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -358,8 +358,8 @@ int	main(void)
 		toto.push_back(nb);
 		lala.push_back(nb);
 	}
-	std::vector<int>::iterator rit = toto.begin();
-	ft::vector<int>::iterator ftit = lala.begin();
+	//std::vector<int>::iterator rit = toto.begin();
+	//ft::vector<int>::iterator ftit = lala.begin();
 	for (size_t i = 0; i < toto.size(); ++i)
 		std::cout << "REAL: " << toto[i] << std::endl;
 	std::cout << std::endl;
@@ -375,6 +375,25 @@ int	main(void)
 	std::cout << "REAL: " << *toto.end() << std::endl;
 	std::cout << "FT: " << *lala.end() << std::endl;
 	std::cout << std::endl;
+	/*std::cout << "rbegin(): " << std::endl;
+	std::cout << "REAL: " << *toto.rbegin() << std::endl;
+	std::cout << "FT: " << *lala.rbegin() << std::endl;
+	std::cout << std::endl;
+	std::cout << "rend(): " << std::endl;
+	std::cout << "REAL: " << *(toto.rend() + 1) << std::endl;
+	std::cout << "FT: " << *(lala.rend() + 1) << std::endl;
+	std::cout << std::endl;
+	std::cout << "insert() 999 at 3 position: " << std::endl;
+	toto.insert(toto.begin() + 2, 999);
+	lala.insert(lala.begin() + 2, 999);
+	std::cout << std::endl;
+	for (size_t i = 0; i < toto.size(); ++i)
+		std::cout << "REAL: " << toto[i] << std::endl;
+	std::cout << std::endl;
+	std::cout << std::endl;
+	for (size_t i = 0; i < lala.size(); ++i)
+		std::cout << "FT: " << lala[i] << std::endl;*/
+	std::cout << std::endl;
 	std::cout << "erase() the second element: " << std::endl;
 	toto.erase(toto.begin() + 1);
 	lala.erase(lala.begin() + 1);
@@ -386,9 +405,9 @@ int	main(void)
 	for (size_t i = 0; i < lala.size(); ++i)
 		std::cout << "FT: " << lala[i] << std::endl;
 	std::cout << std::endl;
-	std::cout << "erase() 2 to 8 elements: " << std::endl;
-	//toto.erase(toto.begin() + 1, toto.begin() + 8);
-	//lala.erase(lala.begin() + 1, lala.begin() + 8);
+	/*std::cout << "erase() 2 to 8 elements: " << std::endl;
+	toto.erase(toto.begin() + 1, toto.begin() + 8);
+	lala.erase(lala.begin() + 1, lala.begin() + 8);
 	std::cout << std::endl;
 	for (size_t i = 0; i < toto.size(); ++i)
 		std::cout << "REAL: " << toto[i] << std::endl;
@@ -396,16 +415,5 @@ int	main(void)
 	std::cout << std::endl;
 	for (size_t i = 0; i < lala.size(); ++i)
 		std::cout << "FT: " << lala[i] << std::endl;
-	std::cout << std::endl;
-	std::cout << "insert() 999 at 3 position: " << std::endl;
-	toto.insert(toto.begin() + 2 ,999);
-	lala.insert(lala.begin() + 2 ,999);
-	std::cout << std::endl;
-	for (size_t i = 0; i < toto.size(); ++i)
-		std::cout << "REAL: " << toto[i] << std::endl;
-	std::cout << std::endl;
-	std::cout << std::endl;
-	for (size_t i = 0; i < lala.size(); ++i)
-		std::cout << "FT: " << lala[i] << std::endl;
-	std::cout << std::endl;
+	std::cout << std::endl;*/
 }
