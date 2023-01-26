@@ -74,13 +74,13 @@ Alloc vector<T, Alloc>::get_allocator(void) const
 template <class T, class Alloc>
 T & vector<T, Alloc>::front(void) const
 {
-	return (_tab[_size]);
+	return (_tab[0]);
 }
 
 template <class T, class Alloc>
 T & vector<T, Alloc>::back(void) const
 {
-	return (_tab[0]);
+	return (_tab[_size - 1]);
 }
 
 template <class T, class Alloc>
@@ -92,10 +92,18 @@ bool vector<T, Alloc>::empty(void) const
 }
 
 template <class T, class Alloc>
+T & vector<T, Alloc>::at(size_type idx)
+{
+	if (idx > _size || idx < 0)
+		throw std::out_of_range("out_of_range");
+	return _tab[idx];
+}
+
+template <class T, class Alloc>
 T & vector<T, Alloc>::at(size_type idx) const
 {
-	if (idx > _size)
-		throw std::out_of_range("index out of range");
+	if (idx > _size || idx < 0)
+		throw std::out_of_range("out_of_range");
 	return _tab[idx];
 }
 
@@ -195,6 +203,17 @@ void vector<T, Alloc>::clear(void)
 	for (size_type i = 0; i < _size; i++)
 		_alloc.destroy(_tab + i);
 	_size = 0;
+}
+
+template <class T, class Alloc>
+void vector<T, Alloc>::assign(size_type n, const value_type &val)
+{
+	clear();
+	while (n)
+	{
+		push_back(val);
+		n--;
+	}
 }
 
 template <class T, class Alloc>

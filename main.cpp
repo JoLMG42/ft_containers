@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 13:01:07 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/01/25 20:03:23 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/01/26 18:52:50 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ int	main(void)
 {
 	srand(time(NULL));
 	ft::vector<int>	ft(3, 1);
+	ft::vector<int>	ft2(3);
 	std::vector<int> real(3, 1);
 
 	std::cout << "---------- START push_back test ----------" << std::endl;
@@ -375,7 +376,7 @@ int	main(void)
 	std::cout << "REAL: " << *toto.end() << std::endl;
 	std::cout << "FT: " << *lala.end() << std::endl;
 	std::cout << std::endl;
-	/*std::cout << "rbegin(): " << std::endl;
+	std::cout << "rbegin(): " << std::endl;
 	std::cout << "REAL: " << *toto.rbegin() << std::endl;
 	std::cout << "FT: " << *lala.rbegin() << std::endl;
 	std::cout << std::endl;
@@ -392,7 +393,7 @@ int	main(void)
 	std::cout << std::endl;
 	std::cout << std::endl;
 	for (size_t i = 0; i < lala.size(); ++i)
-		std::cout << "FT: " << lala[i] << std::endl;*/
+		std::cout << "FT: " << lala[i] << std::endl;
 	std::cout << std::endl;
 	std::cout << "erase() the second element: " << std::endl;
 	toto.erase(toto.begin() + 1);
@@ -405,7 +406,7 @@ int	main(void)
 	for (size_t i = 0; i < lala.size(); ++i)
 		std::cout << "FT: " << lala[i] << std::endl;
 	std::cout << std::endl;
-	/*std::cout << "erase() 2 to 8 elements: " << std::endl;
+	std::cout << "erase() 2 to 8 elements: " << std::endl;
 	toto.erase(toto.begin() + 1, toto.begin() + 8);
 	lala.erase(lala.begin() + 1, lala.begin() + 8);
 	std::cout << std::endl;
@@ -415,5 +416,65 @@ int	main(void)
 	std::cout << std::endl;
 	for (size_t i = 0; i < lala.size(); ++i)
 		std::cout << "FT: " << lala[i] << std::endl;
-	std::cout << std::endl;*/
+	std::cout << std::endl;
+	std::cout << "insert() 999 2 to 8 positions: " << std::endl;
+	toto.insert(toto.begin() + 2, 8, 999);
+	lala.insert(lala.begin() + 2, 8, 999);
+	std::cout << std::endl;
+	for (size_t i = 0; i < toto.size(); ++i)
+		std::cout << "REAL: " << toto[i] << std::endl;
+	std::cout << std::endl;
+	std::cout << std::endl;
+	for (size_t i = 0; i < lala.size(); ++i)
+		std::cout << "FT: " << lala[i] << std::endl;
+	std::cout << std::endl;
+	std::cout << "assign() 1111 for 5 elements: " << std::endl;
+	toto.assign(5, 1111);
+	lala.assign(5, 1111);
+	std::cout << std::endl;
+	for (size_t i = 0; i < toto.size(); ++i)
+		std::cout << "REAL: " << toto[i] << std::endl;
+	std::cout << std::endl;
+	std::cout << std::endl;
+	for (size_t i = 0; i < lala.size(); ++i)
+		std::cout << "FT: " << lala[i] << std::endl;
+	std::cout << std::endl;
+	std::vector<int>::iterator b = toto.begin();
+	std::vector<int>::iterator e = toto.end();
+	std::vector<int> test(b, e);
+	ft::vector<int>::iterator b1 = lala.begin();
+	ft::vector<int>::iterator e1 = lala.end();
+	ft::vector<int> test1(b1, e1);
+	std::cout << std::endl;
+	for (size_t i = 0; i < test.size(); ++i)
+		std::cout << "REAL: " << test[i] << std::endl;
+	std::cout << std::endl;
+	std::cout << std::endl;
+	for (size_t i = 0; i < test1.size(); ++i)
+		std::cout << "FT: " << test1[i] << std::endl;
+	std::cout << std::endl;
+
+	*b = *b - 1;
+	test.assign(b, e);
+	*b1 = *b1 - 1;
+	test1.assign(b1, e1);
+	std::cout << std::endl;
+	for (size_t i = 0; i < test.size(); ++i)
+		std::cout << "REAL: " << test[i] << std::endl;
+	std::cout << std::endl;
+	std::cout << std::endl;
+	for (size_t i = 0; i < test1.size(); ++i)
+		std::cout << "FT: " << test1[i] << std::endl;
+	std::cout << std::endl;
+	test.insert(test.begin(), b, e);
+	test1.insert(test1.begin(), b1, e1);
+	std::cout << std::endl;
+	for (size_t i = 0; i < test.size(); ++i)
+		std::cout << "REAL: " << test[i] << std::endl;
+	std::cout << std::endl;
+	std::cout << std::endl;
+	for (size_t i = 0; i < test1.size(); ++i)
+		std::cout << "REAL: " << test1[i] << std::endl;
+	std::cout << std::endl;
+
 }

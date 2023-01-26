@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 12:28:54 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/01/25 20:01:41 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/01/26 18:53:52 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 #include <cstdlib>
 #include "iterator_traits.hpp"
 #include "reverse_iterator.hpp"
+#include "enable_if.hpp"
+#include "is_integral.hpp"
 
 namespace ft
 {
@@ -93,10 +95,23 @@ class vector
 		typedef	std::size_t	size_type;
 
 		vector(const allocator_type& alloc = allocator_type());
-		vector(size_type n, const value_type & val);
+		vector(size_type n, const value_type & val = value_type());
+		template<class InputIterator>
+		vector(typename ft::enable_if<!ft::is_integral<InputIterator>::value , InputIterator>::type first, InputIterator last, const allocator_type& alloc = allocator_type())
+		{
+			(void)last;
+			_alloc = alloc;
+			_size = last - first;
+			_capacity = _size;
+			_tab = _alloc.allocate(_capacity);
+			for (size_type i = 0; i < _size; ++i)
+			{
+				_alloc.construct(&_tab[i], *first);
+				first++;
+			}
+		}
 		vector(const vector & cpy);
 		~vector();
-
 
 		T & operator[](size_type idx)
 			{ return (_tab[idx]);}
@@ -117,7 +132,9 @@ class vector
 		void	resize(size_type n, const value_type & val = T());
 		void	reserve(size_type n);
 		void	swap(vector<T, Alloc>& x);
+		void	assign(size_type n, const value_type& val);
 		T &	at(size_type idx) const;
+		T &	at(size_type idx);
 		T &	front(void) const;
 		T &	back(void) const;
 		bool	empty(void) const;
@@ -130,6 +147,10 @@ class vector
 		{ return (iterator(&_tab[0])); }
 		iterator end(void)
 		{ return (iterator(&_tab[_size])); }
+		const_iterator begin(void) const
+		{ return (const_iterator(&_tab[0])); }
+		const_iterator end(void) const
+		{ return (const_iterator(&_tab[_size])); }
 		reverse_iterator rbegin(void)
 		{ return (reverse_iterator(&_tab[_size])); }
 		const_reverse_iterator rbegin(void) const
@@ -179,22 +200,20 @@ class vector
 		iterator insert (iterator position, const value_type& val)
 		{
 			_size++;
-			iterator beg = this->begin();
-			_alloc.construct(beg.operator->(), *beg);
+			_alloc.construct(this->begin().operator->(), *(this->begin()));
 			size_t pos = position - this->begin();
-			size_t j = 0;
-			for (size_t i = 0; i < pos; i++)
+			size_t i = _size - 1;;
+			while (i > pos)
 			{
-				std::cout << "BEG boucle: " << *beg << "\n";
 				_alloc.construct(&_tab[i], _tab[i - 1]);
+				i--;
 				_alloc.destroy(&_tab[i - 1]);
-				j = i;
 			}
 			//_alloc.destroy(beg..operator->());
 			//_alloc.destroy(beg.operator->());
 			//beg--;
 
-			_alloc.construct(&_tab[j], val);
+			_alloc.construct(&_tab[pos], val);
 			/*while (beg != this->end())
 			{
 				value = *beg;
@@ -208,14 +227,67 @@ class vector
 			}*/
 			return (position);
 		}
-
+		void insert (iterator position, size_type n, const value_type& val)
+		{
+			while (n)
+			{
+				insert(position, val);
+				position++;
+				n--;
+			}
+			/*_size += n;
+			_alloc.construct(this->begin().operator->(), *(this->begin()));
+			size_t pos = position - this->begin();
+			size_t i = _size - 1;
+			while (i > pos)
+			{
+				_alloc.construct(&_tab[i], _tab[i - 1]);
+				i--;
+				_alloc.destroy(&_tab[i - 1]);
+			}
+			while (i <= n)
+			{
+				_alloc.construct(&_tab[i], val);
+				i++;
+			}*/
+		}
+		template <class InputIterator>
+		void insert(iterator position, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last)
+		{
+			size_t pos = position - this->begin();
+			size_t i = last - first;
+		
+			while (i < pos)
+			{
+				insert(first, *first);
+				first++;
+				i++;
+			}
+		}
+		template <class InputIterator>
+		void assign(typename ft::enable_if<!ft::is_integral<InputIterator>::value , InputIterator>::type first, InputIterator last)
+		{
+			clear();
+			size_t n = last - first;
+			while (n)
+			{
+				push_back(*first);
+				first++;
+				n--;
+			}
+			/*clear();
+			int i = 0;
+			while (first != last)
+			{
+				_alloc.construct(&_tab[i], *first);
+				first++;
+			}*/
+		}
 	private:
 		value_type	*_tab;
 		size_type	_size;
 		size_type	_capacity;
 		allocator_type	_alloc;
-
-
 };
 
 }
