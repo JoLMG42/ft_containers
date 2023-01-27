@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 12:28:54 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/01/26 18:53:52 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/01/27 20:15:06 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 #define VECTOR_HPP
 
+#include <iostream>
 #include <memory>
 #include <iterator>
 #include <cstddef>
-#include <iostream>
 #include <cstdlib>
 #include "iterator_traits.hpp"
 #include "reverse_iterator.hpp"
@@ -72,6 +72,7 @@ class vector
 				friend vector_iterator operator+(difference_type n, vector_iterator const& lhs)
 				{ vector_iterator tmp(lhs); tmp._ptr += n; return (tmp); }
 
+
 				friend bool operator==(const vector_iterator &lhs, const vector_iterator &rhs)
 				{ return lhs._ptr == rhs._ptr; }
 				friend bool operator!=(const vector_iterator &lhs, const vector_iterator &rhs)
@@ -84,6 +85,11 @@ class vector
 				{ return lhs._ptr > rhs._ptr; }
 				friend bool operator<(const vector_iterator &lhs, const vector_iterator &rhs)
 				{ return lhs._ptr < rhs._ptr; }
+
+				operator vector_iterator<const T>() const
+				{
+					return (vector_iterator<const T>(_ptr));
+				}
 		        private:
 		                pointer	_ptr;
 	
@@ -91,11 +97,14 @@ class vector
 
 	public:
 		typedef	T	value_type;
+		typedef T&	reference;
 		typedef	Alloc	allocator_type;
 		typedef	std::size_t	size_type;
+		typedef typename allocator_type::pointer	pointer;
+		typedef typename allocator_type::const_pointer	const_pointer;
 
-		vector(const allocator_type& alloc = allocator_type());
-		vector(size_type n, const value_type & val = value_type());
+		explicit vector(const allocator_type& alloc = allocator_type());
+		explicit vector(size_type n, const value_type & val = value_type());
 		template<class InputIterator>
 		vector(typename ft::enable_if<!ft::is_integral<InputIterator>::value , InputIterator>::type first, InputIterator last, const allocator_type& alloc = allocator_type())
 		{
@@ -117,9 +126,19 @@ class vector
 			{ return (_tab[idx]);}
 		T & operator[](size_type idx) const
 			{ return (_tab[idx]);}
-		T & operator=(const vector & egal)
-			{ _tab = egal._tab; _size = egal._size; _capacity = egal._capacity; _alloc = egal._alloc;
-				return *this;}
+
+		vector & operator=(const vector & egal)
+			{
+				if (_tab)
+				{
+					for (size_t i = 0; i < _size; i++)
+						_alloc.destroy(&_tab[i]);
+					_size = egal._size; _capacity = egal._capacity; _alloc = egal._alloc;
+					_tab = _alloc.allocate(_capacity);
+					for (size_t i = 0; i < _size; i++)
+						_alloc.construct(&_tab[i], egal._tab[i]);
+				}
+				return *this; }
 	
 		size_type	size(void) const;
 		size_type	max_size(void) const;
@@ -142,6 +161,7 @@ class vector
 		typedef vector_iterator<const T> const_iterator;
 		typedef ft::reverse_iterator<iterator> reverse_iterator;
 		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
+
 
 		iterator begin(void)
 		{ return (iterator(&_tab[0])); }
@@ -200,32 +220,16 @@ class vector
 		iterator insert (iterator position, const value_type& val)
 		{
 			_size++;
-			_alloc.construct(this->begin().operator->(), *(this->begin()));
+			if (_capacity < _size)
+				realloc(_capacity + 1);
 			size_t pos = position - this->begin();
-			size_t i = _size - 1;;
-			while (i > pos)
+			for(size_t i = _size - 1; i > pos; i--)
 			{
 				_alloc.construct(&_tab[i], _tab[i - 1]);
-				i--;
 				_alloc.destroy(&_tab[i - 1]);
 			}
-			//_alloc.destroy(beg..operator->());
-			//_alloc.destroy(beg.operator->());
-			//beg--;
-
 			_alloc.construct(&_tab[pos], val);
-			/*while (beg != this->end())
-			{
-				value = *beg;
-				_alloc.construct(beg.operator->(), value);
-				beg++;
-				//_alloc.construct(beg.operator->(), value);
-				std::cout << "BEG boucle 2222: " << *beg << "\n";
-		//		value = *beg;
-				//_alloc.construct(beg.operator->(), *(beg));
-				//_alloc.destroy(beg.operator->());
-			}*/
-			return (position);
+			return (iterator(_tab + pos));
 		}
 		void insert (iterator position, size_type n, const value_type& val)
 		{
@@ -256,12 +260,16 @@ class vector
 		{
 			size_t pos = position - this->begin();
 			size_t i = last - first;
-		
-			while (i < pos)
+			//std::cout << "III: " << i << "\n";
+			//std::cout << "POS: " << pos << "\n";
+			while (i > pos)
 			{
-				insert(first, *first);
+				std::cout << "FIRST: " << *first << "\n";
+				insert(last, *first);
+				position++;
+				last--;
 				first++;
-				i++;
+				i--;
 			}
 		}
 		template <class InputIterator>
@@ -282,6 +290,18 @@ class vector
 				_alloc.construct(&_tab[i], *first);
 				first++;
 			}*/
+		}
+		void	realloc(size_t newcapa)
+		{
+			T *tmp = _alloc.allocate(newcapa);
+			for (size_type j = 0; j < _size - 1; ++j)
+                	        _alloc.construct(&tmp[j], _tab[j]);
+			for (size_type j = 0; j < _size - 1; ++j)
+                	        _alloc.destroy(_tab + j);
+			_alloc.deallocate(_tab, _capacity);
+			_tab = tmp;
+			_capacity = newcapa;
+
 		}
 	private:
 		value_type	*_tab;

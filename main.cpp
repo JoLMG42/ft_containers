@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 13:01:07 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/01/26 18:52:50 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/01/27 20:09:52 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,9 @@ int	main(void)
 	srand(time(NULL));
 	ft::vector<int>	ft(3, 1);
 	ft::vector<int>	ft2(3);
+	ft::vector<int>::iterator p = ft.begin();
+	ft::vector<int>::iterator o = ft.end();
+	ft::vector<int> ft3(p, o);
 	std::vector<int> real(3, 1);
 
 	std::cout << "---------- START push_back test ----------" << std::endl;
@@ -474,7 +477,7 @@ int	main(void)
 	std::cout << std::endl;
 	std::cout << std::endl;
 	for (size_t i = 0; i < test1.size(); ++i)
-		std::cout << "REAL: " << test1[i] << std::endl;
+		std::cout << "FT: " << test1[i] << std::endl;
 	std::cout << std::endl;
 
 }

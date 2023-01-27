@@ -170,12 +170,13 @@ void vector<T, Alloc>::push_back(const value_type & val)
 	}
 	else if (_size < _capacity)
 	{
-		
 		T *tmp = _tab;
 		_size++;
 		_tab = _alloc.allocate(_capacity);
 		for (size_type i = 0; i < _size - 1; ++i)
-			_tab[i] = tmp[i];
+		{
+			_alloc.construct(&_tab[i], tmp[i]);
+		}
 		_tab[_size - 1] = val;
 		for (size_type j = 0; j < _size - 1; ++j)
 			_alloc.destroy(tmp + j);
