@@ -187,12 +187,12 @@ void vector<T, Alloc>::push_back(const value_type & val)
 template <class T, class Alloc>
 void vector<T, Alloc>::pop_back(void)
 {
-	
 	T *tmp = _tab;
 	_size--;
 	_tab = _alloc.allocate(_capacity);
 	for (size_type i = 0; i < _size + 1; ++i)
-		_tab[i] = tmp[i];
+		_alloc.construct(&_tab[i], tmp[i]);
+	//_tab[i] = tmp[i];
 	for (size_type j = 0; j < _size + 1; ++j)
 		_alloc.destroy(tmp + j);
 	_alloc.deallocate(tmp, _capacity);

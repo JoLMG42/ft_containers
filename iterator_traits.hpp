@@ -6,13 +6,16 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 12:16:54 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/01/20 12:28:27 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/01/30 13:08:18 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef ITERATOR_TRAITS_HPP
 
 #define ITERATOR_TRAITS_HPP
+
+#include <iostream>
+
 namespace ft
 {
 
@@ -37,7 +40,7 @@ class iterator_traits<T*>
 {
 	typedef random_access_iterator_tag iterator_category;
 	typedef T                          value_type;
-	typedef ptrdiff_t                  difference_type;
+	typedef std::ptrdiff_t                  difference_type;
 	typedef T*                         pointer;
 	typedef T&                         reference;
 };
@@ -47,7 +50,7 @@ class iterator_traits<const T*>
 {
 	typedef random_access_iterator_tag iterator_category;
 	typedef T                          value_type;
-	typedef ptrdiff_t                  difference_type;
+	typedef std::ptrdiff_t                  difference_type;
 	typedef const T*                         pointer;
 	typedef const T&                         reference;
 };

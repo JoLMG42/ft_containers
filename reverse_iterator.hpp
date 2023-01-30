@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 12:41:15 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/01/24 14:00:54 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/01/30 18:41:32 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ class	reverse_iterator
 		reverse_iterator &operator+=(difference_type n);
 		reverse_iterator operator-(difference_type n) const;
 		reverse_iterator operator+(difference_type n) const;
-		
+
 		private:
 			Iterator	_it;
 		
@@ -68,6 +68,8 @@ template <class Iterator>
 reverse_iterator<Iterator>    operator+(typename reverse_iterator<Iterator>::difference_type n, const reverse_iterator<Iterator>& rev_it);
 template <class Iterator>
 reverse_iterator<Iterator>    operator-(typename reverse_iterator<Iterator>::difference_type n, const reverse_iterator<Iterator>& rev_it);
+template <class Iterator>
+reverse_iterator<Iterator>	operator-(const reverse_iterator<Iterator>& lhs,const reverse_iterator<Iterator>& rhs);
 
 }
 

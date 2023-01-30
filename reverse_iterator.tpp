@@ -153,7 +153,11 @@ reverse_iterator<Iterator> operator-(typename reverse_iterator<Iterator>::differ
 {
 	return (rev_it.base() + n);
 }
-
+template <class Iterator>
+reverse_iterator<Iterator> operator-(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
+{
+	return (lhs.base() - rhs.base());
+}
 
 }
 

@@ -1,6 +1,7 @@
 #include "vector.hpp"
 
-#define TESTED_TYPE int
+#define TESTED_TYPE std::string
+
 #define TESTED_NAMESPACE ft
 
 #define T_SIZE_TYPE typename TESTED_NAMESPACE::vector<T>::size_type
@@ -30,27 +31,27 @@ void    printSize(TESTED_NAMESPACE::vector<T> const &vct, bool print_content = t
 
 int		main(void)
 {
-	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(5);
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(8);
 	TESTED_NAMESPACE::vector<TESTED_TYPE> vct2;
-	const int cut = 3;
+	TESTED_NAMESPACE::vector<TESTED_TYPE>::iterator it = vct.begin();
 
 	for (unsigned long int i = 0; i < vct.size(); ++i)
-		vct[i] = (vct.size() - i) * 7;
+		it[i] = std::string((vct.size() - i), i + 65);
+	printSize(vct, true);
+
+	std::cout << "push_back():\n" << std::endl;
+
+	vct.push_back("One long string");
+	vct2.push_back("Another long string");
+
 	printSize(vct);
-
-	vct2.insert(vct2.begin(), vct.begin(), vct.begin() + cut);
-	printSize(vct2);
-	vct2.insert(vct2.begin(), vct.begin() + cut, vct.end());
-	printSize(vct2);
-	vct2.insert(vct2.end(), vct.begin(), vct.begin() + cut);
 	printSize(vct2);
 
-	std::cout << "insert return:" << std::endl;
+	vct.pop_back();
+	vct2.pop_back();
 
-	std::cout << *vct2.insert(vct2.end(), 42) << std::endl;
-	std::cout << *vct2.insert(vct2.begin() + 5, 84) << std::endl;
-	std::cout << "----------------------------------------" << std::endl;
-
+	printSize(vct);
 	printSize(vct2);
+
 	return (0);
 }
