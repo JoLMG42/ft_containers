@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 12:28:54 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/01/30 17:06:25 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/01/31 12:06:51 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 #include "reverse_iterator.hpp"
 #include "enable_if.hpp"
 #include "is_integral.hpp"
+#include "equal.hpp"
+#include "lexicographical_compare.hpp"
 
 namespace ft
 {
@@ -88,14 +90,21 @@ class vector
 				friend bool operator<(const vector_iterator &lhs, const vector_iterator &rhs)
 				{ return lhs._ptr < rhs._ptr; }
 
-				operator vector_iterator<const T>() const
+				/*operator vector_iterator<const T>() const
 				{
 					return (vector_iterator<const T>(_ptr));
 				}
 				operator vector_iterator<T>() const
 				{
 					return (vector_iterator<T>(_ptr));
+				}*/
+				operator vector_iterator<const value_type>() const
+				{
+					return vector_iterator<const value_type>(_ptr);
 				}
+
+
+
 		        private:
 		                pointer	_ptr;
 	
@@ -108,6 +117,10 @@ class vector
 		typedef	std::size_t	size_type;
 		typedef typename allocator_type::pointer	pointer;
 		typedef typename allocator_type::const_pointer	const_pointer;
+		typedef vector_iterator<T> iterator;
+		typedef vector_iterator<const T> const_iterator;
+		typedef ft::reverse_iterator<iterator> reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
 		explicit vector(const allocator_type& alloc = allocator_type());
 		explicit vector(size_type n, const value_type & val = value_type());
@@ -116,8 +129,16 @@ class vector
 		{
 			(void)last;
 			_alloc = alloc;
-			_size = std::distance(first, last);
+			//_size = std::distance(first, last);
 			//_size = last - first;
+			size_t i = 0;
+			InputIterator tmp(first);
+			while (tmp != last)
+			{
+				i++;
+				tmp++;
+			}
+			_size = i;
 			_capacity = _size;
 			_tab = _alloc.allocate(_capacity);
 			for (size_type i = 0; i < _size; ++i)
@@ -146,6 +167,40 @@ class vector
 						_alloc.construct(&_tab[i], egal._tab[i]);
 				}
 				return *this; }
+
+		friend bool operator==(const vector& lhs, const vector& rhs)
+		{
+			//return (lhs.size() == rhs.size());
+			if (lhs.size() == rhs.size())
+				return (equal(lhs.begin(), lhs.end(), rhs.begin()));
+			return (false);
+		}
+		friend bool operator!=(const vector& lhs, const vector& rhs)
+		{
+			//return (!equal(lhs.begin(), lhs.end(), rhs.begin()));
+			return (!(lhs == rhs));
+			//return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+		}
+		friend bool operator<(const vector& lhs, const vector& rhs)
+		{
+			return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+			//return (lhs.size() < rhs.size());
+		}
+		friend bool operator<=(const vector& lhs, const vector& rhs)
+		{
+			//return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+			return (!(rhs < lhs));
+		}
+		friend bool operator>(const vector& lhs, const vector& rhs)
+		{
+			//return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+			return (rhs < lhs);
+		}
+		friend bool operator>=(const vector& lhs, const vector& rhs)
+		{
+			//return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+			return (!(lhs < rhs));
+		}
 	
 		size_type	size(void) const;
 		size_type	max_size(void) const;
@@ -164,10 +219,6 @@ class vector
 		T &	front(void) const;
 		T &	back(void) const;
 		bool	empty(void) const;
-		typedef vector_iterator<T> iterator;
-		typedef vector_iterator<const T> const_iterator;
-		typedef ft::reverse_iterator<iterator> reverse_iterator;
-		typedef ft::reverse_iterator<const_iterator> const_reverse_iterator;
 
 
 		iterator begin(void)
@@ -285,31 +336,31 @@ class vector
 		template <class InputIterator>
 		void insert(iterator position, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last)
 		{
-			size_type i = std::distance(first, last);
+			//size_type i = std::distance(first, last);
 			//size_t i = last - first;
 			//std::cout << "III: " << i << "\n";
 			//std::cout << "POS: " << pos << "\n";
 			size_t pos = position - this->begin();
-			while (i)
+			while (first != last)
 			{
 				insert(&_tab[pos], *first);
 				//position++;
 				pos++;
 				first++;
-				i--;
+				//i--;
 			}
 		}
 		template <class InputIterator>
 		void assign(typename ft::enable_if<!ft::is_integral<InputIterator>::value , InputIterator>::type first, InputIterator last)
 		{
 			clear();
-			size_t n = std::distance(first, last);
+			//size_t n = std::distance(first, last);
 			//size_t n = last - first;
-			while (n)
+			while (first != last)
 			{
 				push_back(*first);
 				first++;
-				n--;
+				//n--;
 			}
 			/*clear();
 			int i = 0;
@@ -331,12 +382,14 @@ class vector
 			_capacity = newcapa;
 
 		}
+
 	private:
 		value_type	*_tab;
 		size_type	_size;
 		size_type	_capacity;
 		allocator_type	_alloc;
 };
+
 
 }
 

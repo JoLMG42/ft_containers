@@ -30,6 +30,7 @@ typename reverse_iterator<Iterator>::iterator_type reverse_iterator<Iterator>::b
 {
 	return _it;
 }
+
 template <class Iterator>
 typename reverse_iterator<Iterator>::reference &reverse_iterator<Iterator>::operator*(void) const
 {
@@ -106,40 +107,40 @@ reverse_iterator<Iterator> reverse_iterator<Iterator>::operator+(difference_type
 	return reverse_iterator(_it - n);
 }
 
-template <class Iterator>
-bool operator==(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
+template <class Iterator1, class Iterator2>
+bool operator==(const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs)
 {
 	return (lhs.base() == rhs.base());
 }
 
-template <class Iterator>
-bool operator!=(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
+template <class Iterator1, class Iterator2>
+bool operator!=(const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs)
 {
 	return (lhs.base() != rhs.base());
 }
 
-template <class Iterator>
-bool operator<(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-{
-	return (lhs.base() < rhs.base());
-}
-
-template <class Iterator>
-bool operator<=(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-{
-	return (lhs.base() <= rhs.base());
-}
-
-template <class Iterator>
-bool operator>(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
+template <class Iterator1, class Iterator2>
+bool operator<(const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs)
 {
 	return (lhs.base() > rhs.base());
 }
 
-template <class Iterator>
-bool operator>=(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
+template <class Iterator1, class Iterator2>
+bool operator<=(const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs)
 {
 	return (lhs.base() >= rhs.base());
+}
+
+template <class Iterator1, class Iterator2>
+bool operator>(const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs)
+{
+	return (lhs.base() < rhs.base());
+}
+
+template <class Iterator1, class Iterator2>
+bool operator>=(const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs)
+{
+	return (lhs.base() <= rhs.base());
 }
 
 template <class Iterator>
@@ -153,11 +154,18 @@ reverse_iterator<Iterator> operator-(typename reverse_iterator<Iterator>::differ
 {
 	return (rev_it.base() + n);
 }
-template <class Iterator>
-reverse_iterator<Iterator> operator-(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
+
+/*template <class Iterator1, class Iterator2>
+reverse_iterator<Iterator> operator-(typename reverse_iterator<Iterator1>::difference_type n, const reverse_iterator<Iterator2>& rev_it)
+{
+	return (rev_it.base() + n);
+}
+
+template <class Iterator1, class Iterator2>
+reverse_iterator<Iterator> operator-(const reverse_iterator<Iterator1>& lhs, const reverse_iterator<Iterator2>& rhs)
 {
 	return (lhs.base() - rhs.base());
-}
+}*/
 
 }
 
