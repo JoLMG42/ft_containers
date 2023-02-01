@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 12:28:54 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/01/31 12:06:51 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/01 18:00:25 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ class vector
 				typedef U& reference;
 				typedef ft::random_access_iterator_tag iterator_category;
 			        vector_iterator(pointer ptr = 0):_ptr(ptr) {};
-				vector_iterator(vector_iterator const &copy)
-				{ _ptr = copy._ptr; }
+				vector_iterator(vector_iterator const &cpy)
+				{  _ptr = cpy._ptr; }
 				reference operator*(void) const
 				{ return (*_ptr); }
 				pointer operator->() const
@@ -172,7 +172,7 @@ class vector
 		{
 			//return (lhs.size() == rhs.size());
 			if (lhs.size() == rhs.size())
-				return (equal(lhs.begin(), lhs.end(), rhs.begin()));
+				return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
 			return (false);
 		}
 		friend bool operator!=(const vector& lhs, const vector& rhs)
@@ -183,7 +183,7 @@ class vector
 		}
 		friend bool operator<(const vector& lhs, const vector& rhs)
 		{
-			return (lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+			return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
 			//return (lhs.size() < rhs.size());
 		}
 		friend bool operator<=(const vector& lhs, const vector& rhs)

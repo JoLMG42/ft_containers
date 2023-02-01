@@ -6,13 +6,16 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/30 19:31:17 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/01/30 19:44:48 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/01 18:01:04 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LEXICOGRAPHICAL_COMPARE_HPP
 
 #define LEXICOGRAPHICAL_COMPARE_HPP
+
+namespace ft
+{
 
 template <class InputIterator1, class InputIterator2>
   bool lexicographical_compare (InputIterator1 first1, InputIterator1 last1,
@@ -36,6 +39,8 @@ template <class InputIterator1, class InputIterator2, class Compare>  bool lexic
     ++first1; ++first2;
   }
   return (first2!=last2);
+}
+
 }
 
 

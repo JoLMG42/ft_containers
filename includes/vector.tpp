@@ -39,7 +39,7 @@ vector<T, Alloc>::vector(const vector & cpy)
 template <class T, class Alloc>
 vector<T, Alloc>::~vector(void)
 {
-	if (_size >= 0)
+	if (_size)// >= 0)
 	{
 		for (size_type i = 0; i < _size; ++i)
 			_alloc.destroy(_tab + i);
@@ -94,7 +94,7 @@ bool vector<T, Alloc>::empty(void) const
 template <class T, class Alloc>
 T & vector<T, Alloc>::at(size_type idx)
 {
-	if (idx > _size || idx < 0)
+	if (idx > _size)// || idx < 0)
 		throw std::out_of_range("out_of_range");
 	return _tab[idx];
 }

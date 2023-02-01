@@ -3,6 +3,8 @@
 #define REVERSE_ITERATOR_TPP
 
 #include <iostream>
+#include <typeinfo>
+#include <stdio.h>
 
 namespace ft
 {
