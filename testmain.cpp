@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 13:01:07 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/01 16:26:35 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/02 16:41:07 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,18 +24,6 @@
 
 int	main(void)
 {
-	NAME_SPACE::vector<TESTED_TYPE> vct;
-        //NAME_SPACE::vector<TESTED_TYPE>::iterator it = vct.begin();
-        NAME_SPACE::vector<TESTED_TYPE>::const_iterator cit = vct.begin();
-
-        //NAME_SPACE::vector<TESTED_TYPE>::reverse_iterator rit(it);
-
-        //NAME_SPACE::vector<TESTED_TYPE>::const_reverse_iterator crit(rit);
-        //NAME_SPACE::vector<TESTED_TYPE>::const_reverse_iterator crit_(it);
-        NAME_SPACE::vector<TESTED_TYPE>::const_reverse_iterator crit_2(cit);
-	printf("%s\n", typeid(crit_2).name());
-}
-	/*
 	srand(time(NULL));
 	NAME_SPACE::vector<int>	ft(3, 1);
 	NAME_SPACE::vector<int>	ft2(3);
@@ -500,5 +488,3 @@ int	main(void)
 	// 	std::cout << "FT: " << test1[i] << std::endl;
 	// std::cout << std::endl;
 }
-
-*/

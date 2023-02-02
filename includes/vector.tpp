@@ -39,7 +39,7 @@ vector<T, Alloc>::vector(const vector & cpy)
 template <class T, class Alloc>
 vector<T, Alloc>::~vector(void)
 {
-	if (_size)// >= 0)
+	if (_tab)// >= 0)
 	{
 		for (size_type i = 0; i < _size; ++i)
 			_alloc.destroy(_tab + i);
@@ -72,13 +72,13 @@ Alloc vector<T, Alloc>::get_allocator(void) const
 }
 
 template <class T, class Alloc>
-T & vector<T, Alloc>::front(void) const
+T & vector<T, Alloc>::front(void)
 {
 	return (_tab[0]);
 }
 
 template <class T, class Alloc>
-T & vector<T, Alloc>::back(void) const
+T & vector<T, Alloc>::back(void)
 {
 	return (_tab[_size - 1]);
 }
@@ -110,6 +110,11 @@ T & vector<T, Alloc>::at(size_type idx) const
 template <class T, class Alloc>
 void vector<T, Alloc>::resize(size_type n, const value_type & val)
 {
+	if (n > _capacity)
+	{
+		reserve(n);	
+		//return ;
+	}
 	if (n < _size)
 	{
 		for (size_type i = _size; i > n; --i)
@@ -117,8 +122,6 @@ void vector<T, Alloc>::resize(size_type n, const value_type & val)
 	}
 	else if (n > _size)
 	{
-		if (n > _capacity)
-			reserve(n);	
 		for (size_type i = _size; i < n; ++i)
 			push_back(val);
 	}
@@ -136,10 +139,10 @@ void vector<T, Alloc>::reserve(size_type n)
 	if (n > _capacity)
 	{
 		T *tmp = _tab;
-		this->newCapacity(_capacity * 2);
+		this->newCapacity(n * 2);
 		_tab = _alloc.allocate(_capacity);
 		for (size_type i = 0; i < _size; ++i)
-			_tab[i] = tmp[i];
+			_alloc.construct(&_tab[i], tmp[i]);
 		for (size_type j = 0; j < _size; ++j)
 			_alloc.destroy(tmp + j);
 		_alloc.deallocate(tmp, _capacity / 2);
@@ -162,8 +165,9 @@ void vector<T, Alloc>::push_back(const value_type & val)
 		_size++;
 		_tab = _alloc.allocate(_capacity);
 		for (size_type i = 0; i < _size - 1; ++i)
-			_tab[i] = tmp[i];
-		_tab[_size - 1] = val;
+			_alloc.construct(&_tab[i], tmp[i]);
+		_alloc.construct(&_tab[_size - 1], val);
+		//_tab[_size - 1] = val;
 		for (size_type j = 0; j < _size - 1; ++j)
 			_alloc.destroy(tmp + j);
 		_alloc.deallocate(tmp, _capacity / 2);
@@ -174,10 +178,9 @@ void vector<T, Alloc>::push_back(const value_type & val)
 		_size++;
 		_tab = _alloc.allocate(_capacity);
 		for (size_type i = 0; i < _size - 1; ++i)
-		{
 			_alloc.construct(&_tab[i], tmp[i]);
-		}
-		_tab[_size - 1] = val;
+		_alloc.construct(&_tab[_size - 1], val);
+		//_tab[_size - 1] = val;
 		for (size_type j = 0; j < _size - 1; ++j)
 			_alloc.destroy(tmp + j);
 		_alloc.deallocate(tmp, _capacity);
@@ -201,9 +204,11 @@ void vector<T, Alloc>::pop_back(void)
 template <class T, class Alloc>
 void vector<T, Alloc>::clear(void)
 {
-	for (size_type i = 0; i < _size; i++)
-		_alloc.destroy(_tab + i);
-	_size = 0;
+	while (_size)
+	{
+		_alloc.destroy(&_tab[_size - 1]);
+		_size--;
+	}
 }
 
 template <class T, class Alloc>

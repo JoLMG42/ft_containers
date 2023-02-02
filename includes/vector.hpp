@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 12:28:54 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/01 18:00:25 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/02 18:52:14 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,8 +112,10 @@ class vector
 
 	public:
 		typedef	T	value_type;
-		typedef T&	reference;
+		//typedef T&	reference;
 		typedef	Alloc	allocator_type;
+		typedef typename allocator_type::reference			reference;
+		typedef typename allocator_type::const_reference		const_reference;
 		typedef	std::size_t	size_type;
 		typedef typename allocator_type::pointer	pointer;
 		typedef typename allocator_type::const_pointer	const_pointer;
@@ -161,6 +163,7 @@ class vector
 				{
 					for (size_t i = 0; i < _size; i++)
 						_alloc.destroy(&_tab[i]);
+					_alloc.deallocate(_tab, _capacity);
 					_size = egal._size; _capacity = egal._capacity; _alloc = egal._alloc;
 					_tab = _alloc.allocate(_capacity);
 					for (size_t i = 0; i < _size; i++)
@@ -216,9 +219,14 @@ class vector
 		void	assign(size_type n, const value_type& val);
 		T &	at(size_type idx) const;
 		T &	at(size_type idx);
-		T &	front(void) const;
-		T &	back(void) const;
+		T &	front(void);
+		T &	back(void);
 		bool	empty(void) const;
+
+		const_reference	back(void) const
+		{ return (_tab[_size - 1]); }
+		const_reference	front(void) const
+		{ return (_tab[0]); }
 
 
 		iterator begin(void)
@@ -255,7 +263,7 @@ class vector
 		{
 			//iterator begin = this->begin();
 		//	iterator end = this->end();
-			iterator tmp1(first);
+			/*iterator tmp1(first);
 			int i = 0;
 			while (tmp1 != last)
 			{
@@ -264,7 +272,7 @@ class vector
 				tmp1++;
 			}
 			tmp1 = first;
-			while (tmp1 != this->end())
+			while (tmp1 != this->end() - 1)
 			{
 			//	std::cout << "TMP: " << *tmp1 << "\n";
 				_alloc.construct(tmp1.operator->(), *(tmp1 + i));
@@ -272,7 +280,12 @@ class vector
 				_alloc.destroy(tmp1.operator->());
 			}
 			_size -= i;
-			//first = tmp1;
+			//first = tmp1;*/
+			while (first != last)
+			{
+				erase(first);
+				last--;
+			}
 			return (first);
 		}
 		iterator insert (iterator position, const value_type& val)
@@ -285,14 +298,14 @@ class vector
 			}
 			else
 			{
-				_size++;
 				size_t pos;
 				if (position.operator->() == this->begin().operator->())
 					pos = position - begin();
 				else
 					pos = position - this->begin();
-				if (_capacity < _size)
-					reserve(_capacity * 2);
+				if (_capacity < _size + 1)
+					reserve(_capacity + 1);
+				_size++;
 				for(size_t i = _size - 1; i > pos; i--)
 				{
 					_alloc.construct(&_tab[i], _tab[i - 1]);
