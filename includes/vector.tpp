@@ -28,6 +28,9 @@ vector<T, Alloc>::vector(size_type size, const value_type & val)
 template <class T, class Alloc>
 vector<T, Alloc>::vector(const vector & cpy)
 {
+	_tab = NULL;
+	_capacity = 0;
+	_size = 0;
 	_alloc = Alloc();
 	_size = cpy._size;
 	_capacity = cpy._capacity;
@@ -136,6 +139,8 @@ void vector<T, Alloc>::newCapacity(size_type n)
 template <class T, class Alloc>
 void vector<T, Alloc>::reserve(size_type n)
 {
+	if (n > max_size())
+		throw std::length_error("length_error");
 	if (n > _capacity)
 	{
 		T *tmp = _tab;
@@ -157,10 +162,12 @@ void vector<T, Alloc>::push_back(const value_type & val)
 		_capacity++;
 	if (_size >= _capacity)
 	{
-		if (_size == _capacity)
+		if (_size + 1 == _capacity)
 			reserve(_size + 1);
-		if (_size > _capacity)
-			reserve(_size);
+		if (_size + 1 > _capacity && _capacity + 1 == _size)
+			reserve(_size + 1);
+		else if (_size  + 1 > _capacity)
+			reserve(_capacity * 2);
 		T *tmp = _tab;
 		_size++;
 		_tab = _alloc.allocate(_capacity);
@@ -190,7 +197,9 @@ void vector<T, Alloc>::push_back(const value_type & val)
 template <class T, class Alloc>
 void vector<T, Alloc>::pop_back(void)
 {
-	T *tmp = _tab;
+	_alloc.destroy(&_tab[_size - 1]);
+	_size--;
+	/*T *tmp = _tab;
 	_size--;
 	_tab = _alloc.allocate(_capacity);
 	for (size_type i = 0; i < _size + 1; ++i)
@@ -198,7 +207,7 @@ void vector<T, Alloc>::pop_back(void)
 	//_tab[i] = tmp[i];
 	for (size_type j = 0; j < _size + 1; ++j)
 		_alloc.destroy(tmp + j);
-	_alloc.deallocate(tmp, _capacity);
+	_alloc.deallocate(tmp, _capacity);*/
 }
 
 template <class T, class Alloc>
@@ -225,19 +234,21 @@ void vector<T, Alloc>::assign(size_type n, const value_type &val)
 template <class T, class Alloc>
 void vector<T, Alloc>::swap(vector<T, Alloc>& x)
 {
-	T		*tmp = _tab;
-	size_type	tmp_size = _size;
-	size_type	tmp_capacity = _capacity;
-	Alloc		tmp_alloc = get_allocator();
+	T		*tmp = x._tab;
+	size_type	tmp_size = x._size;
+	size_type	tmp_capacity = x._capacity;
+	Alloc		tmp_alloc = x._alloc;
 
-	_tab = x._tab;
-	_size = x.size();
-	_capacity = x.capacity();
-	_alloc = x.get_allocator();
-	x._tab = tmp;
-	x._size = tmp_size;
-	x._capacity = tmp_capacity;
-	x._alloc = tmp_alloc;
+	x._tab = _tab;
+	x._size = _size;
+	x._capacity = _capacity;
+	x._alloc = _alloc;
+
+	_tab = tmp;
+	_size = tmp_size;
+	_capacity = tmp_capacity;
+	_alloc = tmp_alloc;
+
 
 }
 }

@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/19 12:28:54 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/02 18:52:14 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/03 18:20:33 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ class vector
 				vector_iterator operator=(vector_iterator const & egal)
 				{ _ptr = egal._ptr; return *this; }
 				vector_iterator &operator++()
-				{ _ptr++;return *this; }
+				{ _ptr++; return *this; }
 				vector_iterator operator++(int)
 				{ vector_iterator tmp(*this); _ptr++; return tmp; }
 				vector_iterator &operator--()
@@ -159,7 +159,7 @@ class vector
 
 		vector & operator=(const vector & egal)
 			{
-				if (_tab)
+				if (egal._tab)
 				{
 					for (size_t i = 0; i < _size; i++)
 						_alloc.destroy(&_tab[i]);
@@ -232,11 +232,13 @@ class vector
 		iterator begin(void)
 		{ return (iterator(&_tab[0])); }
 		iterator end(void)
-		{ return (iterator(&_tab[_size])); }
+		{ return (iterator(_tab + _size)); }
+		//{ return (iterator(&_tab[_size])); }
 		const_iterator begin(void) const
 		{ return (const_iterator(&_tab[0])); }
 		const_iterator end(void) const
-		{ return (const_iterator(&_tab[_size])); }
+		{ return (const_iterator(_tab + _size)); }
+		//{ return (const_iterator(&_tab[_size])); }
 		reverse_iterator rbegin(void)
 		{ return (reverse_iterator(&_tab[_size])); }
 		const_reverse_iterator rbegin(void) const
@@ -395,13 +397,18 @@ class vector
 			_capacity = newcapa;
 
 		}
-
 	private:
 		value_type	*_tab;
 		size_type	_size;
 		size_type	_capacity;
 		allocator_type	_alloc;
 };
+template <class T, class Alloc>
+void swap (vector<T,Alloc>& x, vector<T,Alloc>& y)
+{
+	x.swap(y);
+}
+
 
 
 }
