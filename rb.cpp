@@ -7,10 +7,11 @@ int	main(void)
 	test.insertNode(2);
 	test.insertNode(4);
 	test.insertNode(1);
-	test.insertNode(5);
-	test.insertNode(8);
+	//test.insertNode(5);
+	//test.insertNode(8);
 	test.insertNode(70);
 	test.insertNode(99);
+	test.deleteNode(test.getRoot(), 70);
 	ft::Node *tmp = test.getRoot();
 	if (tmp)
 	{
