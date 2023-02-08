@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 11:39:45 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/07 18:58:20 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/08 19:19:00 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,85 +53,59 @@ class	RBT
 		node = NULL;
 	}
 	
-  void leftRotate(Node* x) {
-    Node* y = x->m_right;
-    x->m_right = y->m_left;
-    if (y->m_left != NULL) {
-      y->m_left->m_parent = x;
-    }
-    y->m_parent = x->m_parent;
-    if (x->m_parent == nullptr) {
-      this->_root = y;
-    } else if (x == x->m_parent->m_left) {
-      x->m_parent->m_left = y;
-    } else {
-      x->m_parent->m_right = y;
-    }
-    y->m_left = x;
-    x->m_parent = y;
-  }
+	void	leftRotate(Node *node)
+	{
+		 Node *tmp;
 
-  void rightRotate(Node* x) {
-    Node* y = x->m_left;
-    x->m_left = y->m_right;
-    if (y->m_right != NULL) {
-      y->m_right->m_parent = x;
-    }
-    y->m_parent = x->m_parent;
-    if (x->m_parent == nullptr) {
-      this->_root = y;
-    } else if (x == x->m_parent->m_right) {
-      x->m_parent->m_right = y;
-    } else {
-      x->m_parent->m_left = y;
-    }
-    y->m_right = x;
-    x->m_parent = y;
-  }
+		 tmp = node->m_right;
+		 node->m_right = tmp->m_left;
+		 if(tmp->m_left != NULL)
+		 {
+			 tmp->m_left->m_parent = node;
+		 }
+		 tmp->m_parent = node->m_parent;
+		 if (node->m_parent == NULL)
+		 {
+			 _root = tmp;
+		 }
+		 else if (node == node->m_parent->m_left)
+		 {
+			 node->m_parent->m_left = tmp;
+		 }
+		 else
+			 node->m_parent->m_right = tmp;
+		 tmp->m_left = node;
+		 node->m_parent = tmp;
+
+	}
+	
+	void	rightRotate(Node *node)
+	{
+		Node *tmp;
+
+		tmp = node->m_left;
+		node->m_left = tmp->m_right;
+		if (tmp->m_left != NULL)
+		{
+			tmp->m_left->m_parent = node;
+		}
+		tmp->m_parent = node->m_parent;
+		if (node->m_parent == NULL)
+		{
+			_root = tmp;
+		}
+		else if (node == node->m_parent->m_right)
+		{
+			node->m_parent->m_left = tmp;
+		}
+		else
+			node->m_parent->m_right = tmp;
+		tmp->m_left = node;
+		node->m_parent = tmp;
+	}
 
 	void	insertionFix(Node *newN)
 	{
-    /*Node *u;
-    while (k->m_parent->m_color == s_red) {
-      if (k->m_parent == k->m_parent->m_parent->m_right) {
-        u = k->m_parent->m_parent->m_left;
-        if (u->m_color == s_red) {
-          u->m_color = s_black;
-          k->m_parent->m_color = s_black;
-          k->m_parent->m_parent->m_color = s_red;
-          k = k->m_parent->m_parent;
-        } else {
-          if (k == k->m_parent->m_left) {
-            k = k->m_parent;
-            rightRotate(k);
-          }
-          k->m_parent->m_color = s_black;
-          k->m_parent->m_parent->m_color = s_red;
-          leftRotate(k->m_parent->m_parent);
-        }
-      } else {
-        u = k->m_parent->m_parent->m_right;
-
-        if (u->m_color == s_red) {
-          u->m_color = s_black;
-          k->m_parent->m_color = s_black;
-          k->m_parent->m_parent->m_color = s_red;
-          k = k->m_parent->m_parent;
-        } else {
-          if (k == k->m_parent->m_right) {
-            k = k->m_parent;
-            leftRotate(k);
-          }
-          k->m_parent->m_color = s_black;
-          k->m_parent->m_parent->m_color = s_red;
-          rightRotate(k->m_parent->m_parent);
-        }
-      }
-      if (k == _root) {
-        break;
-      }
-    }
-    _root->m_color = s_black;*/
 		Node	*tmp;
 		while(newN->m_parent->m_color == s_red)
 		{
@@ -237,6 +211,200 @@ class	RBT
 		if (newN->m_parent->m_parent == NULL)
 			return;
 		insertionFix(newN);
+	}
+
+	  /*void rbTransplant(Node *u, Node *v) {
+    if (u->m_parent == nullptr) {
+      _root = v;
+    } else if (u == u->m_parent->m_left) {
+      u->m_parent->m_left = v;
+    } else {
+      u->m_parent->m_right = v;
+    }
+    v->m_parent = u->m_parent;
+  }
+
+  Node *minimum(Node *node) {
+    while (node->m_left != NULL) {
+      node = node->m_left;
+    }
+    return node;
+  }
+
+	 void deleteNode(Node* node, int key) {
+    Node* z = NULL;
+    Node* x;
+    Node *y;
+    while (node != NULL) {
+      if (node->key == key) {
+        z = node;
+      }
+
+      if (node->key <= key) {
+        node = node->m_right;
+      } else {
+        node = node->m_left;
+      }
+    }
+
+
+    y = z;
+    int y_original_color = y->m_color;
+    if (z->m_left == NULL) {
+      x = z->m_right;
+      rbTransplant(z, z->m_right);
+    } else if (z->m_right == NULL) {
+      x = z->m_left;
+      rbTransplant(z, z->m_left);
+    } else {
+      y = minimum(z->m_right);
+      y_original_color = y->m_color;
+      x = y->m_right;
+      if (y->m_parent == z) {
+        x->m_parent = y;
+      } else {
+        rbTransplant(y, y->m_right);
+        y->m_right = z->m_right;
+        y->m_right->m_parent = y;
+      }
+
+      rbTransplant(z, y);
+      y->m_left = z->m_left;
+      y->m_left->m_parent = y;
+      y->m_color = z->m_color;
+    }
+    delete z;
+    if (y_original_color == s_black) {
+      deleteFix(x);
+    }
+  }
+
+void deleteFix(Node* x) {
+    Node* s;
+    while (x != _root && x->m_color == s_black) {
+      if (x == x->m_parent->m_left) {
+        s = x->m_parent->m_right;
+        if (s->m_color == s_red) {
+          s->m_color = s_black;
+          x->m_parent->m_color = s_red;
+          leftRotate(x->m_parent);
+          s = x->m_parent->m_right;
+        }
+
+        if (s->m_left->m_color == s_black && s->m_right->m_color == s_black) {
+          s->m_color = s_red;
+          x = x->m_parent;
+        } else {
+          if (s->m_right->m_color == s_black) {
+            s->m_left->m_color = s_black;
+            s->m_color = s_red;
+            rightRotate(s);
+            s = x->m_parent->m_right;
+          }
+
+          s->m_color = x->m_parent->m_color;
+          x->m_parent->m_color = s_black;
+          s->m_right->m_color = s_black;
+          leftRotate(x->m_parent);
+          x = _root;
+        }
+      } else {
+        s = x->m_parent->m_left;
+        if (s->m_color == s_red) {
+          s->m_color = s_black;
+          x->m_parent->m_color = s_red;
+          rightRotate(x->m_parent);
+          s = x->m_parent->m_left;
+        }
+
+        if (s->m_right->m_color == s_black && s->m_right->m_color == s_black) {
+          s->m_color = s_red;
+          x = x->m_parent;
+        } else {
+          if (s->m_left->m_color == s_black) {
+            s->m_right->m_color = s_black;
+            s->m_color = s_red;
+            leftRotate(s);
+            s = x->m_parent->m_left;
+          }
+
+          s->m_color = x->m_parent->m_color;
+          x->m_parent->m_color = s_black;
+          s->m_left->m_color = s_black;
+          rightRotate(x->m_parent);
+          x = _root;
+        }
+      }
+    }
+    x->m_color = s_black;
+  }*/
+
+	void	deletionFix(Node *first)
+	{
+		 Node *tmp;
+		 while (first != _root  && first->m_color == s_black)	 
+		 {
+			 if (first == first->m_parent->m_left)
+			 {
+				tmp = first->m_parent->m_right;
+				if (first->m_parent->m_right->m_color == s_red)
+				{
+					tmp->m_color = s_black;
+					first->m_parent->m_color = s_red;
+					leftRotate(first->m_parent);
+					tmp = first->m_parent->m_left;
+				}
+				if (tmp->m_left->m_color == s_black && tmp->m_right->m_color == s_black)
+				{
+					tmp->m_color = s_red;
+					first = first->m_parent;
+				}
+				else if (tmp->m_right->m_color == s_black)
+				{
+					tmp->m_left->m_color = s_black;
+					tmp->m_color = s_red;
+					rightRotate(tmp);
+					tmp = first->m_parent->m_right;
+				}
+				//else
+				//{
+					tmp->m_color = first->m_parent->m_color;
+					first->m_parent->m_color = s_black;
+					tmp->m_right->m_color = s_black;
+					leftRotate(first->m_parent);
+					first = _root;
+				//}
+			 }
+			 else if (first == first->m_parent->m_right)
+			 {
+				tmp = first->m_parent->m_left;
+				if (first->m_parent->m_left->m_color == s_red)
+				{
+					tmp->m_color = s_black;
+					first->m_parent->m_color = s_red;
+					leftRotate(first->m_parent);
+					tmp = first->m_parent->m_right;
+				}
+				if (tmp->m_right->m_color == s_black && tmp->m_left->m_color == s_black)
+				{
+					tmp->m_color = s_red;
+					first = first->m_parent;
+				}
+				else if (tmp->m_left->m_color == s_black)
+				{
+					tmp->m_right->m_color = s_black;
+					tmp->m_color = s_red;
+					rightRotate(tmp);
+					tmp = first->m_parent->m_left;
+				}
+					tmp->m_color = first->m_parent->m_color;
+					first->m_parent->m_color = s_black;
+					tmp->m_left->m_color = s_black;
+					leftRotate(first->m_parent);
+					first = _root;
+			 }
+		 }
+		 first->m_color = s_black;
 	}
 
 	void	deleteNode(Node *delN, int key)
@@ -352,7 +520,7 @@ class	RBT
 			std::cout << "NO find\n";
 			return ;
 		}
-
+		deletionFix(first);
 	}
 };
 }

@@ -1,6 +1,30 @@
 #include "includes/RBT.hpp"
 #include <iostream>
 
+  void printHelper(ft::Node *root, std::string indent, bool last) {
+    if (root != NULL) {
+      std::cout << indent;
+      if (last) {
+        std::cout << "R----";
+        indent += "   ";
+      } else {
+        std::cout << "L----";
+        indent += "|  ";
+      }
+
+      std::string sColor = root->m_color ? "RED" : "BLACK";
+      std::cout << root->key << "(" << sColor << ")" << std::endl;
+      printHelper(root->m_left, indent, false);
+      printHelper(root->m_right, indent, true);
+    }
+  }
+
+  void printTree(ft::RBT t) {
+    if (t.getRoot()) {
+      printHelper(t.getRoot(), "", true);
+    }
+    }
+
 int	main(void)
 {
 	ft::RBT test;
@@ -11,8 +35,14 @@ int	main(void)
 	//test.insertNode(8);
 	test.insertNode(70);
 	test.insertNode(99);
+	printTree(test);
+	std::cout << "\n";
+	std::cout << "\n";
+	std::cout << "\n";
+	std::cout << "\n";
 	test.deleteNode(test.getRoot(), 70);
-	ft::Node *tmp = test.getRoot();
+	printTree(test);
+	/*ft::Node *tmp = test.getRoot();
 	if (tmp)
 	{
 		std::cout << "parent: " << test.getRoot()->key << "\n";
@@ -33,5 +63,5 @@ int	main(void)
 			std::cout << "left child: " << test.getRoot()->m_left->key << "\n";
 			tmp->m_left = tmp->m_left->m_left;
 		}
-	}
+	}*/
 }
