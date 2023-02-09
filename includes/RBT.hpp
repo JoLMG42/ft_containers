@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 11:39:45 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/08 19:19:00 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/09 18:23:44 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,10 @@ class	RBT
 {
 	private:
 		Node *_root;
+		Node *NULLnode;
 	public:
 	
+
 	Node	*getRoot(void)
 	{ return _root; }
 	void	initNode(Node *node)
@@ -52,6 +54,42 @@ class	RBT
 		node->m_color = s_black;
 		node = NULL;
 	}
+
+	  /*void leftRotate(Node* x) {
+    Node* y = x->m_right;
+    x->m_right = y->m_left;
+    if (y->m_left != NULLnode) {
+      y->m_left->m_parent = x;
+    }
+    y->m_parent = x->m_parent;
+    if (x->m_parent == nullptr) {
+      this->_root = y;
+    } else if (x == x->m_parent->m_left) {
+      x->m_parent->m_left = y;
+    } else {
+      x->m_parent->m_right = y;
+    }
+    y->m_left = x;
+    x->m_parent = y;
+  }
+
+  void rightRotate(Node* x) {
+    Node* y = x->m_left;
+    x->m_left = y->m_right;
+    if (y->m_right != NULLnode) {
+      y->m_right->m_parent = x;
+    }
+    y->m_parent = x->m_parent;
+    if (x->m_parent == nullptr) {
+      this->_root = y;
+    } else if (x == x->m_parent->m_right) {
+      x->m_parent->m_right = y;
+    } else {
+      x->m_parent->m_left = y;
+    }
+    y->m_right = x;
+    x->m_parent = y;
+  }*/
 	
 	void	leftRotate(Node *node)
 	{
@@ -104,6 +142,50 @@ class	RBT
 		node->m_parent = tmp;
 	}
 
+	 /*void insertionFix(Node* k) {
+    Node* u;
+    while (k->m_parent->m_color == s_red) {
+      if (k->m_parent == k->m_parent->m_parent->m_right) {
+        u = k->m_parent->m_parent->m_left;
+        if (u->m_color == s_red) {
+          u->m_color = s_black;
+          k->m_parent->m_color = s_black;
+          k->m_parent->m_parent->m_color = s_red;
+          k = k->m_parent->m_parent;
+        } else {
+          if (k == k->m_parent->m_left) {
+            k = k->m_parent;
+            rightRotate(k);
+          }
+          k->m_parent->m_color = s_black;
+          k->m_parent->m_parent->m_color = s_red;
+          leftRotate(k->m_parent->m_parent);
+        }
+      } else {
+        u = k->m_parent->m_parent->m_right;
+
+        if (u->m_color == s_red) {
+          u->m_color = s_black;
+          k->m_parent->m_color = s_black;
+          k->m_parent->m_parent->m_color = s_red;
+          k = k->m_parent->m_parent;
+        } else {
+          if (k == k->m_parent->m_right) {
+            k = k->m_parent;
+            leftRotate(k);
+          }
+          k->m_parent->m_color = s_black;
+          k->m_parent->m_parent->m_color = s_red;
+          rightRotate(k->m_parent->m_parent);
+        }
+      }
+      if (k == _root) {
+        break;
+      }
+    }
+    _root->m_color = s_black;
+  }*/
+
 	void	insertionFix(Node *newN)
 	{
 		Node	*tmp;
@@ -112,36 +194,44 @@ class	RBT
 			if (newN->m_parent == newN->m_parent->m_parent->m_right)
 			{
 				tmp = newN->m_parent->m_parent->m_left;
-				if (newN->m_parent->m_parent->m_color == s_red)
+				if (newN->m_parent->m_parent->m_left->m_color == s_red)
 				{
-					newN->m_parent->m_right->m_color = s_black;
-					newN->m_parent->m_left->m_color = s_black;
+					tmp->m_color = s_black;
+					newN->m_parent->m_color = s_black;
+					//newN->m_parent->m_right->m_color = s_black;
+					//newN->m_parent->m_left->m_color = s_black;
 					newN->m_parent->m_parent->m_color = s_red;
 					newN = newN->m_parent->m_parent;
 				}
-				else if (newN == newN->m_parent->m_left)
+				else
 				{
-					newN = newN->m_parent;
-					leftRotate(newN);
+					if (newN == newN->m_parent->m_left)
+					{
+						newN = newN->m_parent;
+						rightRotate(newN);
+					}
 					newN->m_parent->m_color = s_black;
 					newN->m_parent->m_parent->m_color = s_red;
-					rightRotate(newN->m_parent->m_parent); 
+					leftRotate(newN->m_parent->m_parent); 
 				}
-			}
+		}
 			else
 			{
 				tmp = newN->m_parent->m_parent->m_right;
-				if (tmp->m_color == s_black)
+				if (tmp->m_color == s_red)
 				{
 					tmp->m_color = s_black;
 					newN->m_parent->m_color = s_black;
 					newN->m_parent->m_parent->m_color = s_red;
 					newN = newN->m_parent->m_parent;
 				}
-				else if (newN == newN->m_parent->m_right)
+				else
 				{
-					newN = newN->m_parent;
-					leftRotate(newN);
+					if (newN == newN->m_parent->m_right)
+					{
+						newN = newN->m_parent;
+						leftRotate(newN);
+					}
 					newN->m_parent->m_color = s_black;
 					newN->m_parent->m_parent->m_color = s_red;
 					rightRotate(newN->m_parent->m_parent); 
@@ -153,19 +243,61 @@ class	RBT
 		_root->m_color = s_black;
 	}
 
+	  /*void insertNode(int key) {
+    Node* node = new Node;
+    node->m_parent = nullptr;
+    node->key = key;
+    node->m_left = NULL;
+    node->m_right = NULL;
+    node->m_color = s_red;
+
+    Node* y = nullptr;
+    Node* x = this->_root;
+
+    while (x != NULL) {
+      y = x;
+      if (node->key < x->key) {
+        x = x->m_left;
+      } else {
+        x = x->m_right;
+      }
+    }
+
+    node->m_parent = y;
+    if (y == nullptr) {
+      _root = node;
+    } else if (node->key < y->key) {
+      y->m_left = node;
+    } else {
+      y->m_right = node;
+    }
+
+    if (node->m_parent == nullptr) {
+      node->m_color = s_black;
+      return;
+    }
+
+    if (node->m_parent->m_parent == nullptr) {
+      return;
+    }
+
+    insertionFix(node);
+  }*/
+
 	void	insertNode(int k)
 	{
 		Node	*newN = new Node;
 		
 		newN->key = k;
 		newN->m_parent = nullptr;
-		newN->m_left = NULL;
-		newN->m_right = NULL;
+		newN->m_left = NULLnode;
+		newN->m_right = NULLnode;
 		newN->m_color = s_red;
-		Node 	*first = NULL;
-		Node	*second = _root;
 
-		while (first != NULL)
+		Node 	*first = _root;
+		Node	*second = nullptr;
+
+		while (first != NULLnode)
 		{
 			second = first;
 			if (newN->key < first->key)
@@ -179,9 +311,15 @@ class	RBT
 		if (second == NULL)
 		{
 			_root = newN;
-			_root->m_color = s_black;
+			//_root->m_color = s_black;
+		}
+		else if (newN->key < second->key)
+		{
+			second->m_left = newN;
 		}
 		else
+			second->m_right = newN;
+		/*else
 		{
 			Node	*tmp = _root;
 			while (1)
@@ -195,7 +333,7 @@ class	RBT
 					tmp->m_left = newN;
 					break;
 				}
-				else if (tmp->m_right && k > tmp->key)
+				if (tmp->m_right && k > tmp->key)
 				{
 					tmp = tmp->m_right;
 				}
@@ -205,7 +343,7 @@ class	RBT
 					break;
 				}
 			}
-		}
+		}*/
 		if (newN->m_parent == NULL)
 			return;
 		if (newN->m_parent->m_parent == NULL)
@@ -275,7 +413,7 @@ class	RBT
     }
     delete z;
     if (y_original_color == s_black) {
-      deleteFix(x);
+      deletionFix(x);
     }
   }
 
@@ -407,15 +545,17 @@ void deleteFix(Node* x) {
 		 first->m_color = s_black;
 	}
 
+	void	rightMove(Node *first, Node *second)
+	{
+
+	}
+
 	void	deleteNode(Node *delN, int key)
 	{
-		Node *tmp;
+		Node *tmp = NULLnode;
 		Node *first;
 		Node *second;
-		initNode(tmp);
-		initNode(first);
-		initNode(second);
-		while (delN != NULL)
+		while (delN != NULLnode)
 		{
 			if (delN->key == key)
 				tmp = delN;
@@ -430,11 +570,11 @@ void deleteFix(Node* x) {
 			std::cout << "FIND\n";
 			second = tmp;
 			int second_color = second->m_color;
-			if (tmp->m_left == NULL)
+			if (tmp->m_left == NULLnode)
 			{
 				std::cout << "laaaaa\n";
 				first = tmp->m_right;
-				if (tmp->m_parent == NULL)
+				if (tmp->m_parent == NULLnode)
 				{
 					_root = tmp->m_right;
 				}
@@ -449,10 +589,10 @@ void deleteFix(Node* x) {
 				}
 				tmp->m_right->m_parent = tmp->m_parent;
 			}
-			else if (tmp->m_right == NULL)
+			else if (tmp->m_right == NULLnode)
 			{
 				first = tmp->m_left;
-				if (tmp->m_parent == NULL)
+				if (tmp->m_parent == NULLnode)
 				{
 					_root = tmp->m_left;
 				}
@@ -480,7 +620,7 @@ void deleteFix(Node* x) {
 				}
 				else
 				{
-					if (second->m_parent == NULL)
+					if (second->m_parent == NULLnode)
 					{
 						_root = second->m_right;
 					}
@@ -496,7 +636,7 @@ void deleteFix(Node* x) {
 					second->m_right = tmp->m_right;
 					second->m_right->m_parent = second;
 				}
-				if (tmp->m_parent == NULL)
+				if (tmp->m_parent == NULLnode)
 				{
 					_root = second;
 				}
@@ -521,6 +661,15 @@ void deleteFix(Node* x) {
 			return ;
 		}
 		deletionFix(first);
+	}
+
+	RBT(void)
+	{
+		NULLnode = new Node;
+		NULLnode->m_color = s_black;
+		NULLnode->m_left = NULL;
+		NULLnode->m_right = NULL;
+		_root = NULLnode;
 	}
 };
 }

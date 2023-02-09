@@ -28,12 +28,31 @@
 int	main(void)
 {
 	ft::RBT test;
+	//test.initNode(test.getRoot());
 	test.insertNode(2);
+	printTree(test);
+	std::cout << "\n";
+	std::cout << "\n";
+	std::cout << "\n";
+	std::cout << "\n";
 	test.insertNode(4);
+	printTree(test);
+	std::cout << "\n";
+	std::cout << "\n";
+	std::cout << "\n";
+	std::cout << "\n";
 	test.insertNode(1);
-	//test.insertNode(5);
-	//test.insertNode(8);
+	printTree(test);
+	std::cout << "\n";
+	std::cout << "\n";
+	std::cout << "\n";
+	std::cout << "\n";
 	test.insertNode(70);
+	printTree(test);
+	std::cout << "\n";
+	std::cout << "\n";
+	std::cout << "\n";
+	std::cout << "\n";
 	test.insertNode(99);
 	printTree(test);
 	std::cout << "\n";
