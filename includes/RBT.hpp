@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 11:39:45 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/15 18:27:27 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/20 17:17:15 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,9 +91,9 @@ class	RBT
 
 		tmp = node->m_left;
 		node->m_left = tmp->m_right;
-		if (tmp->m_left != NULL)
+		if (tmp->m_right != NULL)
 		{
-			tmp->m_left->m_parent = node;
+			tmp->m_right->m_parent = node;
 		}
 		tmp->m_parent = node->m_parent;
 		if (node->m_parent == NULL)
@@ -102,11 +102,11 @@ class	RBT
 		}
 		else if (node == node->m_parent->m_right)
 		{
-			node->m_parent->m_left = tmp;
+			node->m_parent->m_right = tmp;
 		}
 		else
-			node->m_parent->m_right = tmp;
-		tmp->m_left = node;
+			node->m_parent->m_left = tmp;
+		tmp->m_right = node;
 		node->m_parent = tmp;
 	}
 
@@ -119,7 +119,7 @@ class	RBT
 			{
 				std::cout << "cas 1   ->  " << newN->key << "\n";
 				tmp = newN->m_parent->m_parent->m_right;
-				if (newN->m_parent->m_parent->m_left->m_color == s_red)
+				if (newN->m_parent->m_parent->m_right->m_color == s_red)
 				{
 					std::cout << "cas 1 --- 1   ->  " << newN->key << "\n";
 					tmp->m_color = s_black;
@@ -138,6 +138,8 @@ class	RBT
 						newN = newN->m_parent;
 						leftRotate(newN);
 					}
+				//else
+				//{
 					newN->m_parent->m_color = s_black;
 					newN->m_parent->m_parent->m_color = s_red;
 					rightRotate(newN->m_parent->m_parent); 
