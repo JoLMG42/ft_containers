@@ -1,6 +1,7 @@
 #include "includes/RBT.hpp"
 #include "includes/map.hpp"
 #include "includes/pair.hpp"
+#include "includes/make_pair.hpp"
 #include <iostream>
 #include <iomanip>
 
@@ -33,16 +34,17 @@
       printHelper(t.getRoot(), "", true);
     }
     }*/
-
-	void	real_print(ft::Node<int> *ptr, int space, ft::RBT<int, ft::map<int, int, std::less<int>, std::allocator<ft::pair<const int, int>>>::value_compare> test)
+	void	real_print(ft::RBT<ft::map<int, int>::key_type, ft::map<int, int>::mapped_type, ft::map<int, int>::value_type, ft::map<int, int>::key_compare>::Node<int> *ptr, int space, ft::RBT<ft::map<int, int>::key_type, ft::map<int, int>::mapped_type, ft::map<int, int>::value_type, ft::map<int, int>::key_compare> test)
 	{
 		if (!ptr || ptr == test.getNULL())
+		{
 			return;
+		}
 		space += 4;
 		real_print(ptr->m_right, space, test);
 		std::cout
 			<< (ptr->m_color == ft::s_black ? "\033[90m" : "\033[31m") << std::setw(space)
-			<< ptr->key << "\033[0m" << std::endl;
+			<< ptr->p.second << "\033[0m" << std::endl;
 		// getwchar();
 		real_print(ptr->m_left, space, test);
 	}
@@ -50,38 +52,38 @@
 int	main(void)
 {
 	ft::map<int, int, std::less<int>, std::allocator<ft::pair<const int, int>> > M;
-	ft::RBT<char *, char *> test;
-	M._tree.insertNode(50);
+	//ft::RBT<char *, char *> test;
+	M._tree.insertNode(ft::make_pair(50, 50));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
-	M._tree.insertNode(8);
+	M._tree.insertNode(ft::make_pair(8, 8));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
-	M._tree.insertNode(99);
+	M._tree.insertNode(ft::make_pair(99, 99));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
-	M._tree.insertNode(1);
+	M._tree.insertNode(ft::make_pair(1, 1));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
-	M._tree.insertNode(54);
+	M._tree.insertNode(ft::make_pair(54, 54));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
-	M._tree.insertNode(7);
+	M._tree.insertNode(ft::make_pair(7, 7));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
-	M._tree.insertNode(16);
+	M._tree.insertNode(ft::make_pair(16, 16));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";
 	std::cout << "\n";
@@ -98,49 +100,50 @@ int	main(void)
 	//real_print(M._tree.getRoot(), 0, M._tree);
 	M.clear();
 	std::cout << "SIZZEEEE after clear(): " << M.size() << "\n";
-	M._tree.insertNode(50);
+	M._tree.insertNode(ft::make_pair(50, 51));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
-	M._tree.insertNode(8);
+	M._tree.insertNode(ft::make_pair(8, 8));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
-	M._tree.insertNode(99);
+	M._tree.insertNode(ft::make_pair(99, 166));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
-	M._tree.insertNode(1);
+	M._tree.insertNode(ft::make_pair(1, 1));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
-	M._tree.insertNode(54);
+	M._tree.insertNode(ft::make_pair(54, 54));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
-	M._tree.insertNode(7);
+	M._tree.insertNode(ft::make_pair(7, 7));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
-	M._tree.insertNode(16);
+	M._tree.insertNode(ft::make_pair(16, 16));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
 	std::cout << "ADD MULTIPLE NODE\n";
-	M._tree.insertNode(43);
-	M._tree.insertNode(71);
-	M._tree.insertNode(83);
-	M._tree.insertNode(987);
-	M._tree.insertNode(12);
-	M._tree.insertNode(52);
+	M._tree.insertNode(ft::make_pair(43, 43));
+	M._tree.insertNode(ft::make_pair(71, 71));
+	M._tree.insertNode(ft::make_pair(83, 83));
+	M._tree.insertNode(ft::make_pair(987, 987));
+	M._tree.insertNode(ft::make_pair(12, 12));
+	M._tree.insertNode(ft::make_pair(52, 52));
 	real_print(M._tree.getRoot(), 0, M._tree);
+	M._tree.ft_test();
 	//real_print(M._tree.getRoot(), 0, M._tree);*/
 	//test.insertNode((char *)"salut1");
 	//test.insertNode((char *)"salut2");

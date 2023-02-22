@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:27:32 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/15 18:56:52 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/22 16:30:58 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,20 +27,17 @@ struct pair
 		first_type	first;
 		second_type	second;
 
-		pair(void)
+		pair(void): first(first_type())
 		{
-			first = first_type();
 			second = second_type();
 		}
 		template<class U, class V>
-		pair (const pair<U, V> &cpy)
+		pair (const pair<U, V> &cpy):first(cpy.first)
 		{
-			first = cpy.first;
 			second = cpy.second;
 		}
-		pair (const first_type& a, const second_type& b)
+		pair (const first_type& a, const second_type& b):first(a)
 		{
-			first = a;
 			second = b;
 		}
 

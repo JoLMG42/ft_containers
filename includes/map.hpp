@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 15:54:03 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/15 19:06:14 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/22 17:23:06 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,10 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 
 			explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
 			{
-				//RBT<key_type, value_compare>	_tree;
 				_alloc = alloc;
-				RBT<key_type, value_compare>	_tree({});
+				//RBT<key_type, value_compare>	_tree({});
+				RBT<key_type, mapped_type, value_type, key_compare, allocator_type>	_tree({});
+				//RBT _tree;
 			}
 
 			size_type	count(const key_type &k) const
@@ -107,7 +108,9 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 		//	}
 		//private:
 			//RBT<key_type, value_compare>	_tree;
-			RBT<key_type, value_compare> _tree;
+			RBT<key_type, mapped_type, value_type, key_compare>	_tree;
+			//RBT _tree;
+			//RBT<key_type, value_compare> _tree;
 			Alloc	_alloc;
 	};
 }
