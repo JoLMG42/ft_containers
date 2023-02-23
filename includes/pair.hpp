@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 16:27:32 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/22 16:30:58 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/23 14:06:16 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ struct pair
 		pair& operator= (const pair &egal)
 		{
 			first = egal.first;
-			second = egal.swdecond;
+			second = egal.second;
 			return (*this);
 		}
 

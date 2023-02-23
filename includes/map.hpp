@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 15:54:03 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/22 17:23:06 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/23 19:19:17 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 
 #include "pair.hpp"
 #include "RBT.hpp"
+#include "iterator_traits.hpp"
+#include "make_pair.hpp"
 
 namespace ft
 {
@@ -23,18 +25,39 @@ namespace ft
 template< class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T>> >
 	class map
 	{
+		template <class U, class V>
+		class map_iterator
+		{
+			typedef U		value_type;
+			typedef ptrdiff_t	difference_type;
+			typedef U*		pointer;
+			typedef U&		reference;
+			typedef ft::bidirectional_iterator_tag  iterator_category;
+
+			public:
+				map_iterator(V *ptr = 0):_ptr(ptr)
+				{
+				}
+
+			private:
+				V *_ptr;
+
+		};
 		public:
+			//struct Node;
 			typedef Key					key_type;
 			typedef	T					mapped_type;
 			typedef pair<const key_type, mapped_type>	value_type;
 			typedef	Compare					key_compare;
 			typedef	size_t					size_type;
-			//typedef value_compare;
 			typedef	Alloc					allocator_type;
 			typedef	typename allocator_type::reference		reference;
 			typedef	typename allocator_type::const_reference		const_reference;
 			typedef	typename allocator_type::pointer			pointer;
 			typedef	typename allocator_type::const_pointer		const_pointer;
+			//typedef RBT<key_type, mapped_type, value_type, key_compare, allocator_type> Node;
+			typedef	typename RBT<key_type, mapped_type, value_type>::template Node<mapped_type> Node;
+			typedef map_iterator<value_type, Node>					iterator;
 
 			explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
 			{
@@ -44,6 +67,27 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				//RBT _tree;
 			}
 
+			map(const map& x)
+			{
+				*this = x;
+			}
+
+			iterator	begin(void)
+			{
+				iterator tmp(_tree.minD(_tree.getRoot()));
+				return tmp;
+			}
+
+			pair<iterator, bool>	insert(const value_type &val)
+			{
+				//	return (make_pair(iterator(val), false));
+				_tree.insertNode(val);
+				iterator tmp(_tree.searchRetNode(val.first));
+				return (make_pair(tmp, true));
+				//return iterator(val);
+			}
+
+			
 			size_type	count(const key_type &k) const
 			{
 				if (_tree.search(k))

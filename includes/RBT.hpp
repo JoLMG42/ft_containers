@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 11:39:45 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/22 19:18:30 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/23 19:23:53 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ class	RBT
 	typedef	Allocator	allocator_type;
 	public:
 	template <class V>
-	struct	Node
+	struct 	Node
 	{
 		RBT_color	m_color;
 		Node		*m_parent;
@@ -49,6 +49,15 @@ class	RBT
 	
 		Node(const value_type &v = value_type()):key(v.second), m_color(s_black), m_parent(NULL), m_right(NULL), m_left(NULL), p(v)
 		{
+		}
+		
+		Node(Node const &cpy):p(cpy.p)
+		{
+			m_color = cpy.m_color;
+			m_parent = cpy.m_parent;
+			m_left = cpy.m_left;
+			m_right = cpy.m_right;
+			key = cpy.key;
 		}
 	};
 	typedef typename allocator_type::template rebind<Node<T>>::other	Node_allocator;
@@ -487,7 +496,6 @@ class	RBT
 
 	T	searchRetVal(const T &key) const
 	{
-		std::cout << "key search: " << key << "\n";
 		int	flag = 0;
 		Node<T> *tmp = _root;
 		while (tmp != NULLnode)
@@ -503,6 +511,26 @@ class	RBT
                 }
 		if (flag == 1)
 			return (tmp->key);
+		return (0);
+	}
+
+	Node<T>	*searchRetNode(const T &key) const
+	{
+		int	flag = 0;
+		Node<T> *tmp = _root;
+		while (tmp != NULL)
+                {
+                        if (tmp && tmp->key == key)
+			{
+				flag = 1;
+			}
+                        if (tmp && tmp->key < key)
+                                tmp = tmp->m_right;
+                        else if (tmp)
+                                tmp = tmp->m_left;
+                }
+		if (flag == 1)
+			return (tmp);
 		return (0);
 	}
 
