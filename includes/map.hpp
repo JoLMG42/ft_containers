@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 15:54:03 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/23 19:19:17 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/27 19:06:35 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,57 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			typedef ft::bidirectional_iterator_tag  iterator_category;
 
 			public:
-				map_iterator(V *ptr = 0):_ptr(ptr)
+				map_iterator(V *ptr = 0): _ptr(ptr)
 				{
+				}
+
+				V *operator=(const V &egal)
+				{
+					//std::cout << "ICICICICICICIC: " << _ptr->m_right << "\n";
+					std::cout << "OPERATOR=\n";
+					_ptr->_alloc.deallocate();
+					_ptr->alloc.allocate(1);
+					_ptr->p = egal.p;
+					_ptr->_alloc = egal._alloc;
+				}
+				pointer	operator->() const
+				{
+					return &this->_ptr->p;
+				}
+
+				V	*operator++(int)
+				{
+					if (_ptr->m_right)
+					{
+						V  *tmp = _ptr->m_right;
+						while (tmp->m_left)
+						{
+							tmp = tmp->m_left;
+						}
+						_ptr = tmp;
+						return tmp;
+					}
+					else
+					{
+						V *tmp = _ptr->m_parent;
+						while (tmp)
+						{
+							if (tmp->p.first > _ptr->p.first)
+							{
+								_ptr = tmp;
+								return tmp;
+							}
+							tmp = tmp->m_parent;
+						}
+					}
+					return (0);
+
+
+				}
+
+				operator map_iterator<const U, V>()  const
+				{
+					return  map_iterator<const U, V>(_ptr);
 				}
 
 			private:
@@ -58,12 +107,13 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			//typedef RBT<key_type, mapped_type, value_type, key_compare, allocator_type> Node;
 			typedef	typename RBT<key_type, mapped_type, value_type>::template Node<mapped_type> Node;
 			typedef map_iterator<value_type, Node>					iterator;
-
+			typedef map_iterator<const value_type, Node>				const_iterator;
+  
 			explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
 			{
 				_alloc = alloc;
 				//RBT<key_type, value_compare>	_tree({});
-				RBT<key_type, mapped_type, value_type, key_compare, allocator_type>	_tree({});
+				//RBT<key_type, mapped_type, value_type, key_compare, allocator_type>	_tree({});
 				//RBT _tree;
 			}
 
@@ -78,10 +128,42 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				return tmp;
 			}
 
+			const_iterator	begin(void) const
+			{
+				const_iterator tmp(_tree.minD(_tree.getRoot()));
+				return tmp;
+			}
+
+			iterator end()
+			{
+				iterator tmp(_tree.maxD(_tree.getRoot()));
+				tmp->second = 0;
+				return (tmp);
+			}
+			const_iterator end() const
+			{
+				const_iterator tmp(_tree.maxD(_tree.getRoot()));
+				tmp->second = 0;
+				return (tmp);
+			}
+
+			pair<const_iterator,const_iterator> equal_range (const key_type& k) const
+			{
+				///   FAIRE LE CAS OU CA TROUVE PAS ///
+				return make_pair(const_iterator(_tree.searchRetNode(k)), const_iterator(_tree.searchRetNode(k))++);
+			}
+
+			pair<iterator,iterator>	equal_range (const key_type& k)
+			{
+				///   FAIRE LE CAS OU CA TROUVE PAS ///
+				return make_pair(iterator(_tree.searchRetNode(k)), iterator(_tree.searchRetNode(k))++);
+			}
+
 			pair<iterator, bool>	insert(const value_type &val)
 			{
 				//	return (make_pair(iterator(val), false));
 				_tree.insertNode(val);
+				//std::cout << "insert val: " << val.first << "\n";
 				iterator tmp(_tree.searchRetNode(val.first));
 				return (make_pair(tmp, true));
 				//return iterator(val);
@@ -111,7 +193,6 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			size_type	size(void) const
 			{
 				size_type s = _tree.countElem(_tree.getRoot(), 1);
-				std::cout << "ssss: " << s << "\n";
 				_tree.countElem(_tree.getRoot(), 0);
 				return (s);
 			}

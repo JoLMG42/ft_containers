@@ -53,7 +53,7 @@ int	main(void)
 {
 	ft::map<int, int, std::less<int>, std::allocator<ft::pair<const int, int>> > M;
 	//ft::RBT<char *, char *> test;
-	M._tree.insertNode(ft::make_pair(50, 50));
+	/*M._tree.insertNode(ft::make_pair(50, 50));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";
 	std::cout << "\n";
@@ -99,8 +99,8 @@ int	main(void)
 	std::cout << "SIZZEEEE before clear(): " << M.size() << "\n";
 	//real_print(M._tree.getRoot(), 0, M._tree);
 	M.clear();
-	std::cout << "SIZZEEEE after clear(): " << M.size() << "\n";
-	M._tree.insertNode(ft::make_pair(50, 51));
+	std::cout << "SIZZEEEE after clear(): " << M.size() << "\n";*/
+	M._tree.insertNode(ft::make_pair(50, 50));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";
 	std::cout << "\n";
@@ -110,7 +110,7 @@ int	main(void)
 	std::cout << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
-	M._tree.insertNode(ft::make_pair(99, 166));
+	M._tree.insertNode(ft::make_pair(99, 99));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";
 	std::cout << "\n";
@@ -144,7 +144,10 @@ int	main(void)
 	M._tree.insertNode(ft::make_pair(52, 52));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	M._tree.ft_test();
-	//real_print(M._tree.getRoot(), 0, M._tree);*/
+	/*M._tree.insertNode(ft::make_pair(1, 8));
+	M._tree.insertNode(ft::make_pair(2, 9));
+	M._tree.insertNode(ft::make_pair(3, 10));
+	real_print(M._tree.getRoot(), 0, M._tree);*/
 	//test.insertNode((char *)"salut1");
 	//test.insertNode((char *)"salut2");
 	//test.insertNode((char *)"salut");

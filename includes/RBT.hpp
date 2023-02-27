@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 11:39:45 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/23 19:23:53 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/27 19:08:14 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <cstddef>
 #include <iostream>
 #include "pair.hpp"
+#include "make_pair.hpp"
 //#include "map.hpp"
 
 namespace ft
@@ -47,7 +48,7 @@ class	RBT
 		V		key;
 		value_type	p;
 	
-		Node(const value_type &v = value_type()):key(v.second), m_color(s_black), m_parent(NULL), m_right(NULL), m_left(NULL), p(v)
+		Node(const value_type &v = value_type()):m_color(s_red), m_parent(NULL), m_left(NULL), m_right(NULL), key(v.first), p(v)
 		{
 		}
 		
@@ -89,13 +90,16 @@ class	RBT
 
 		 tmp = node->m_right;
 		 node->m_right = tmp->m_left;
-		 if(tmp->m_left != NULL)
+		 if(tmp && tmp->m_left != NULL)
 		 {
 			 tmp->m_left->m_parent = node;
 		 }
 		 tmp->m_parent = node->m_parent;
+		 std::cout << "NODE PARENT: " << node->m_parent << "\n";
+		 //std::cout << "NODE PARENT data: " << node->m_parent->p. second<< "\n";
 		 if (node->m_parent == NULL)
 		 {
+			 std::cout << "LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n";
 			 _root = tmp;
 		 }
 		 else if (node == node->m_parent->m_left)
@@ -103,9 +107,17 @@ class	RBT
 			 node->m_parent->m_left = tmp;
 		 }
 		 else
+		 {
+			 std::cout << "lalalalalalalaal\n";
 			 node->m_parent->m_right = tmp;
+		 }
 		 tmp->m_left = node;
 		 node->m_parent = tmp;
+		 std::cout << "NODE LEFT ROTATE: " << node->p.second << "\n";
+		 std::cout << "LEFT ROTATE tmp: " << tmp->p.second << "\n";
+		 std::cout << "LEFT ROTATE left tmp: " << tmp->m_left->p.second << "\n";
+		 //std::cout << "LEFT ROTATE right tmp: " << tmp->m_right->p.second << "\n";
+
 
 	}
 	
@@ -115,7 +127,7 @@ class	RBT
 
 		tmp = node->m_left;
 		node->m_left = tmp->m_right;
-		if (tmp->m_right != NULL)
+		if (tmp && tmp->m_right != NULL)
 		{
 			tmp->m_right->m_parent = node;
 		}
@@ -139,6 +151,7 @@ class	RBT
 		Node<T>	*tmp;
 		while(newN->m_parent->m_color == s_red)
 		{
+			std::cout << "boucle while compteur\n";
 			if (newN->m_parent == newN->m_parent->m_parent->m_left)
 			{
 				std::cout << "cas 1   ->  " << newN->key << "\n";
@@ -149,8 +162,6 @@ class	RBT
 					std::cout << "cas 1 --- 1   ->  " << newN->key << "\n";
 					tmp->m_color = s_black;
 					newN->m_parent->m_color = s_black;
-					//newN->m_parent->m_right->m_color = s_black;
-					//newN->m_parent->m_left->m_color = s_black;
 					newN->m_parent->m_parent->m_color = s_red;
 					newN = newN->m_parent->m_parent;
 				}
@@ -193,11 +204,17 @@ class	RBT
 					}
 					newN->m_parent->m_color = s_black;
 					newN->m_parent->m_parent->m_color = s_red;
-					leftRotate(newN->m_parent->m_parent); 
+					std::cout << "NEWN PARENT: " << newN->m_parent->key << "\n";
+					std::cout << "NEWN PARENT PARENT: " << newN->m_parent->m_parent->key << "\n";
+					//std::cout << "NEWN PARENT PARENT PARENT: " << newN->m_parent->m_parent->m_parent->key << "\n";
+					leftRotate(newN->m_parent->m_parent);
 				}
 			}
 			if (newN == _root)
+			{
+				std::cout << "BREAK GROS WHILE\n";
 				break ;
+			}
 		}
 		_root->m_color = s_black;
 	}
@@ -206,6 +223,8 @@ class	RBT
 	{
 		Node<T> *tmp = _alloc.allocate(1);
 		_alloc.construct(tmp, Node<T>(v));
+		//tmp->m_right = NULLnode;
+		//tmp->m_left = NULLnode;
 		return tmp;
 	}
 
@@ -214,21 +233,22 @@ class	RBT
 		Node<T>	*newN = newNode(node);
 		
 		/*newN->key = k;*/
-		//newN->m_parent = nullptr;
+		newN->m_parent = NULL;
 		newN->m_left = NULL;
 		newN->m_right = NULL;
 		newN->m_color = s_red;
 
 		Node<T> 	*x = _root;
-		Node<T>		*y = nullptr;
+		std::cout << "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: " << _root << "\n";
+		Node<T>		*y = NULL;
 
 		std::cout << "debut insert: " << newN->p.first << "\n";
-		std::cout << "root debut insert: " << _root->p.first << "\n";
+		std::cout << "root debut insert: " << _root << "\n";
 		while (x != NULL)
 		{
-			y = x;
-			std::cout << "NEW: " << newN->p.first << "\n";
+			std::cout << "NEW: " << newN->p.second << "\n";
 			std::cout << "X: " << x->p.first << "\n";
+			y = x;
 			if (_comp(newN->p.first, x->p.first))
 			{
 				x = x->m_left;
@@ -236,9 +256,11 @@ class	RBT
 			else
 				x = x->m_right;
 		}
-		std::cout << "yyyy: " << y->p.first << "\n";
+		//std::cout << "yyyy first: " << y->p.first << "\n";
+		//std::cout << "yyyy second: " << y->p.second << "\n";
+		std::cout << "SIZEEEEE: " << _size << "\n";
 		newN->m_parent = y;
-		if (y == NULLnode)
+		if (_size == 0)
 		{
 			std::cout << "ppppppp\n";
 			newN->m_color = s_black;
@@ -281,10 +303,13 @@ class	RBT
 				}
 			}
 		}*/
+		_size++;
 		if (newN->m_parent == NULL)
 			return;
 		if (newN->m_parent->m_parent == NULL)
 			return;
+		std::cout << "END INSERT NEW->first: " << newN->p.first << "\n";
+		std::cout << "END INSERT NEW->second: " << newN->p.second << "\n";
 		insertionFix(newN);
 	}
 
@@ -520,14 +545,19 @@ class	RBT
 		Node<T> *tmp = _root;
 		while (tmp != NULL)
                 {
-                        if (tmp && tmp->key == key)
+                        if (tmp && tmp->p.first > key)
+			{
+                                tmp = tmp->m_left;
+			}
+                        else if (tmp && tmp->p.first < key)
+			{
+                                tmp = tmp->m_right;
+			}
+                        else
 			{
 				flag = 1;
+				break ;
 			}
-                        if (tmp && tmp->key < key)
-                                tmp = tmp->m_right;
-                        else if (tmp)
-                                tmp = tmp->m_left;
                 }
 		if (flag == 1)
 			return (tmp);
@@ -543,9 +573,9 @@ class	RBT
 
 	Node<T>	*maxD(Node<T> *node)
 	{
-		while (node->m_right != NULLnode)
+		while (node->m_right != NULL)
 			node = node->m_right;
-		return (node);
+		return (newNode(make_pair(node->p.first + 1, node->p.second)));
 	}
 
 	void	destroyAll(void)
@@ -577,19 +607,22 @@ class	RBT
 	{
 		NULLnode = newNode();
 		NULLnode->m_color = s_black;
+		NULLnode->m_parent = NULL;
 		NULLnode->m_left = NULL;
 		NULLnode->m_right = NULL;
 		_root = newNode();
-		_root->m_color = s_black;
-		_root->m_left = NULLnode;
-		_root->m_right = NULLnode;
-		std::cout << "salut\n";
+		_root = NULL;
+		//_root->m_color = s_black;
+		_size = 0;
+		//_root->m_left = NULLnode;
+		//_root->m_right = NULLnode;
 	}
 	private:
 		Node<T> *_root;
 		Node<T> *NULLnode;
 		compare_type	_comp;
 		Node_allocator	_alloc;
+		size_t		_size;
 };
 }
 
