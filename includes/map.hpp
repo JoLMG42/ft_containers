@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 15:54:03 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/27 19:06:35 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/28 13:01:21 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,11 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 					return (0);
 
 
+				}
+
+				friend bool operator!=(const map_iterator &lhs, const map_iterator &rhs)
+				{
+					return (lhs._ptr != rhs._ptr);
 				}
 
 				operator map_iterator<const U, V>()  const
@@ -159,6 +164,26 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				return make_pair(iterator(_tree.searchRetNode(k)), iterator(_tree.searchRetNode(k))++);
 			}
 
+			void	erase(iterator position)
+			{
+				_tree.deleteNode(_tree.getRoot(), _tree.searchRetVal(position->first));
+
+			}
+
+			size_type	erase(const key_type& k)
+			{
+				return (_tree.deleteNode(_tree.getRoot(), _tree.searchRetVal(k)));
+			}
+
+			void	erase(iterator first, iterator last)
+			{
+				while (first != last)
+				{
+					_tree.deleteNode(_tree.getRoot(), _tree.searchRetVal(first->first));
+					first++;
+				}
+			}
+
 			pair<iterator, bool>	insert(const value_type &val)
 			{
 				//	return (make_pair(iterator(val), false));
@@ -168,7 +193,7 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				return (make_pair(tmp, true));
 				//return iterator(val);
 			}
-
+			
 			
 			size_type	count(const key_type &k) const
 			{
@@ -216,8 +241,7 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				{   // in C++98, it is required to inherit binary_function<value_type,value_type,bool>
 					protected:
 						Compare comp;
-						value_compare (Compare c) : comp(c) {}  // constructed with map's comparison object
-					public:
+
 						typedef bool result_type;
 						typedef value_type first_argument_type;
 						typedef value_type second_argument_type;

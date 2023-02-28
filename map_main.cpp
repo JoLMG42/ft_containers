@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 16:38:12 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/27 18:59:34 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/28 12:58:49 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,25 @@ int	main(void)
 	my++;
 	std::cout << "test ++ : " << my->first << "\n";
 
-
+	it = real.begin();
+	it++;
+	my = ft.begin();
+	my++;
+	std::cout << "it = " << it->first << "\n";
+	std::cout << "my = " << my->first << "\n";
+	std::cout << "Erase it and my\n";
+	real.erase(it);
+	ft.erase(my);
 	real_print(ft._tree.getRoot(), 0, ft._tree);
+	it = real.begin();
+	my = ft.begin();
+	std::cout << "it = " << it->first << "\n";
+	std::cout << "my = " << my->first << "\n";
+	
+	real.insert(std::make_pair(1, 8));
+	ft.insert(ft::make_pair(1, 8));
+	real.erase(real.begin(), real.end());
+	//ft.erase(ft.begin(), ft.end());
+	//real_print(ft._tree.getRoot(), 0, ft._tree);
 
 }
-

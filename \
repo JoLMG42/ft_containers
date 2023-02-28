@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 11:39:45 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/28 13:02:04 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/28 12:07:53 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,8 +135,6 @@ class	RBT
 	void	insertionFix(Node<T> *newN)
 	{
 		Node<T>	*tmp;
-		std::cout << "COLOR PARENT DE NEWN: " << newN->m_parent->m_color << "\n";
-		std::cout << "KEY PARENT DE NEWN: " << newN->m_parent->p.first << "\n";
 		while(newN->m_parent->m_color == s_red)
 		{
 			std::cout << "boucle while compteur\n";
@@ -147,7 +145,7 @@ class	RBT
 				//if (newN->m_parent->m_parent->m_right->m_color == s_red)
 				if (tmp && tmp->m_color == s_red)
 				{
-					std::cout << "casssss 1 --- 1   ->  " << newN->key << "\n";
+					std::cout << "cas 1 --- 1   ->  " << newN->key << "\n";
 					tmp->m_color = s_black;
 					newN->m_parent->m_color = s_black;
 					newN->m_parent->m_parent->m_color = s_red;
@@ -236,10 +234,7 @@ class	RBT
 		{
 			std::cout << "NEW: " << newN->p.second << "\n";
 			std::cout << "X: " << x->p.first << "\n";
-			std::cout << "X COLOR: " << x->m_color << "\n";
 			y = x;
-			std::cout << "Y: " << y->p.first << "\n";
-			std::cout << "Y COLOR: " << y->m_color << "\n";
 			if (_comp(newN->p.first, x->p.first))
 			{
 				x = x->m_left;
@@ -251,10 +246,6 @@ class	RBT
 		//std::cout << "yyyy second: " << y->p.second << "\n";
 		std::cout << "SIZEEEEE: " << _size << "\n";
 		newN->m_parent = y;
-		if (newN->m_parent)
-		{
-			std::cout << "NEWN PARENT COLOR dans mid insert (if): " << newN->m_parent->m_color << "\n";
-		}
 		if (_size == 0)
 		{
 			std::cout << "ppppppp\n";
@@ -267,9 +258,7 @@ class	RBT
 			y->m_left = newN;
 		}
 		else if (newN->key > y->key)
-		{
 			y->m_right = newN;
-		}
 		else
 		{
 			 y->m_right = newN;
@@ -305,7 +294,6 @@ class	RBT
 			return;
 		if (newN->m_parent->m_parent == NULL)
 			return;
-		std::cout << "NEWN PARENT COLOR FIN INSERT: " << newN->m_parent->m_color << "\n";
 		std::cout << "END INSERT NEW->first: " << newN->p.first << "\n";
 		std::cout << "END INSERT NEW->second: " << newN->p.second << "\n";
 		insertionFix(newN);
@@ -394,7 +382,7 @@ class	RBT
 		{
 			x->m_parent->m_right = y;
 		}
-		//std::cout << "SWAP x->parent : " << x->m_parent->p.first << "\n";
+		std::cout << "SWAP x->parent : " << x->m_parent->p.first << "\n";
 		//std::cout << "SWAP y->parent : " << y->m_parent->p.first << "\n";
 		y->m_parent = x->m_parent;
 	}
@@ -403,10 +391,11 @@ class	RBT
 	{
 		if (node != NULLnode && node != NULL)
 		{
-			while (node->m_left != NULL)
+			while (node->m_left != NULLnode)
 				node = node->m_left;
-		}
 		return (node);
+		}
+		return (node->m_parent);
 	}
 
 	Node<T>	*maxTree(Node<T> *node)
@@ -461,7 +450,6 @@ class	RBT
 				std::cout << "y avant minTree: " << y->key << "\n";
 				y = minTree(tmp->m_right);
 				y_color = y->m_color;
-				std::cout << "Y COLOR DANS DELETE: " << y_color << "\n";
 				x = y->m_right;
 				std::cout << "DEL/tmp debut gros while: " << tmp->key << "\n";
 				std::cout << "x debut gros while: " << x->key << "\n";
@@ -487,11 +475,11 @@ class	RBT
 				y->m_color = tmp->m_color;
 			}
 			delete tmp;
-		//	if (y_color == s_black)
-		//	{
+			if (y_color == s_black)
+			{
 				std::cout << "go in fix deletion\n";
 				deletionFix(x);
-		//	}
+			}
 			return (1);
 		}
 		else	
