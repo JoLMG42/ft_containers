@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 11:39:45 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/28 13:02:04 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/28 17:38:36 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -512,7 +512,7 @@ class	RBT
 			{
 				flag = 1;
 			}
-                        if (tmp && tmp->key <= key)
+                        if (tmp && tmp->key < key)
                                 tmp = tmp->m_right;
                         else
                                 tmp = tmp->m_left;
@@ -568,18 +568,19 @@ class	RBT
 		return (0);
 	}
 
-	Node<T>	*minD(Node<T> *node)
+	Node<T>	*minD(Node<T> *node) const
 	{
 		while (node->m_left != NULL)
 			node = node->m_left;
 		return (node);
 	}
 
-	Node<T>	*maxD(Node<T> *node)
+	Node<T>	*maxD(Node<T> *node) const
 	{
 		while (node->m_right != NULL)
 			node = node->m_right;
-		return (newNode(make_pair(node->p.first + 1, node->p.second)));
+		return (node);
+		//return (newNode(make_pair(node->p.first + 1, node->p.second)));
 	}
 
 	void	destroyAll(void)

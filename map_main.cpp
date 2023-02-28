@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 16:38:12 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/28 12:58:49 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/02/28 17:12:50 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,8 +113,24 @@ int	main(void)
 	
 	real.insert(std::make_pair(1, 8));
 	ft.insert(ft::make_pair(1, 8));
-	real.erase(real.begin(), real.end());
+	//real.erase(real.begin(), real.end());
 	//ft.erase(ft.begin(), ft.end());
 	//real_print(ft._tree.getRoot(), 0, ft._tree);
+
+	std::map<int,int>::iterator itlow,itup;
+	itlow = real.lower_bound(54);
+	std::cout << "real test lower first: " << itlow->first << "\n";
+	std::cout << "real test lower second: " << itlow->second << "\n";
+	itlow = real.upper_bound(54);
+	std::cout << "real test upper first: " << itlow->first << "\n";
+	std::cout << "real test upper second: " << itlow->second << "\n";
+
+	ft::map<int,int>::iterator itlow2,itup2;
+	itlow2 = ft.lower_bound(54);
+	std::cout << "ft test lower first: " << itlow2->first << "\n";
+	std::cout << "ft test lower second: " << itlow2->second << "\n";
+	itlow2 = ft.upper_bound(54);
+	std::cout << "ft test upper first: " << itlow2->first << "\n";
+	std::cout << "ft test upper second: " << itlow2->second << "\n";
 
 }
