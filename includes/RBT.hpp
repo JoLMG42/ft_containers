@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 11:39:45 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/28 17:38:36 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/01 19:54:08 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ class	RBT
 			key = cpy.key;
 		}
 	};
-	typedef typename allocator_type::template rebind<Node<T>>::other	Node_allocator;
+	typedef typename allocator_type::template rebind<Node<T> >::other	Node_allocator;
 	
 
 	Node<T>	*getRoot(void) const
@@ -382,6 +382,8 @@ class	RBT
 
 	void	swap(Node<T> *x, Node<T> *y)
 	{
+		if (y == NULL)
+			y = NULLnode;
 		if (x->m_parent == NULL)
 		{
 			_root = y;
@@ -570,16 +572,47 @@ class	RBT
 
 	Node<T>	*minD(Node<T> *node) const
 	{
-		while (node->m_left != NULL)
+		if (node == NULL)
+			return (0);
+		while (node && node->m_left != NULL)
+		{
+	//		std::cout << "MIIIIINNNNNNNNN\n";
 			node = node->m_left;
+		}
+	//	std::cout << "VALUEEEE DANS MIIIIN: " << node->p.first << "\n";
 		return (node);
 	}
 
 	Node<T>	*maxD(Node<T> *node) const
 	{
-		while (node->m_right != NULL)
+		if (node == NULL)
+			return (0);
+		while (node && node->m_right != NULL)
+		{
+		//	std::cout << "MAAAAAAAAAXXXXXXX\n";
 			node = node->m_right;
+		}
+		//std::cout << "VALUEEEE DANS MAXXXX: " << node->p.first << "\n";
 		return (node);
+		//return (newNode(make_pair(node->p.first + 1, node->p.second)));
+	}
+
+	Node<T>	*maxNode(Node<T> *node)
+	{
+		if (node == NULL)
+			return (0);
+		while (node && node->m_right != NULL)
+		{
+		//	std::cout << "MAAAAAAAAAXXXXXXX\n";
+			node = node->m_right;
+		}
+		ft::pair<T, U> test = make_pair(_size, 0);
+		Node<T> *tmp = newNode(test);
+		tmp->m_parent = node;
+		tmp->m_right = NULL;
+		tmp->m_left = NULL;
+		std::cout << "VALUEEEE DANS MAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX: " << tmp->m_parent->p.first << "\n";
+		return (tmp);
 		//return (newNode(make_pair(node->p.first + 1, node->p.second)));
 	}
 
@@ -621,6 +654,11 @@ class	RBT
 		_size = 0;
 		//_root->m_left = NULLnode;
 		//_root->m_right = NULLnode;
+	}
+	
+	size_t	getSize(void)
+	{
+		return _size;
 	}
 	private:
 		Node<T> *_root;

@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 15:54:03 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/28 18:42:42 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/01 19:59:04 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,12 @@
 #include "RBT.hpp"
 #include "iterator_traits.hpp"
 #include "make_pair.hpp"
+#include <iomanip>
 
 namespace ft
 {
 
-template< class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T>> >
+template< class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T> > >
 	class map
 	{
 		template <class U, class V>
@@ -53,7 +54,7 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 					return &this->_ptr->p;
 				}
 
-				map_iterator &operator++()
+				/*map_iterator &operator++()
 					{
 						if (_ptr != NULL)
 						{
@@ -82,9 +83,9 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				map_iterator operator++(int)
 				{
 					map_iterator tmp(*this);++(*this);return tmp;
-				}
+				}*/
 
-				/*map_iterator	&operator++(int)
+				V	*operator--(int)
 				{
 					if (_ptr && _ptr->m_right)
 					{
@@ -109,8 +110,63 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 							tmp = tmp->m_parent;
 						}
 					}
-					std::cout << "AAHAHAHAHAHAHHAHAHAHA\n";
-					return (*this);
+					return (0);
+				}
+
+				V	*operator--()
+				{
+					if (_ptr->m_right)
+					{
+						V  *tmp = _ptr->m_right;
+						while (tmp->m_left)
+						{
+							tmp = tmp->m_left;
+						}
+						_ptr = tmp;
+						return tmp;
+					}
+					else
+					{
+						V *tmp = _ptr->m_parent;
+						while (tmp)
+						{
+							if (tmp->p.first > _ptr->p.first)
+							{
+								_ptr = tmp;
+								return tmp;
+							}
+							tmp = tmp->m_parent;
+						}
+					}
+					return (0);
+				}
+
+				V	*operator++(int)
+				{
+					if (_ptr && _ptr->m_right)
+					{
+						V  *tmp = _ptr->m_right;
+						while (tmp->m_left)
+						{
+							tmp = tmp->m_left;
+						}
+						_ptr = tmp;
+						return tmp;
+					}
+					else if (_ptr)
+					{
+						V *tmp = _ptr->m_parent;
+						while (tmp)
+						{
+							if (tmp->p.first > _ptr->p.first)
+							{
+								_ptr = tmp;
+								return tmp;
+							}
+							tmp = tmp->m_parent;
+						}
+					}
+					return (0);
 				}
 
 				V	*operator++()
@@ -139,7 +195,12 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 						}
 					}
 					return (0);
-				}*/
+				}
+
+				reference	operator*(void)
+				{
+					return _ptr->p;
+				}
 
 				friend bool operator==(const map_iterator &lhs, const map_iterator &rhs)
 				{
@@ -195,6 +256,7 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
 			{
 				_alloc = alloc;
+				_comp = comp;
 				//RBT<key_type, value_compare>	_tree({});
 				//RBT<key_type, mapped_type, value_type, key_compare, allocator_type>	_tree({});
 				//RBT _tree;
@@ -205,15 +267,33 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				*this = x;
 			}
 
+			        void    real_print(Node *ptr, int space, RBT<key_type, mapped_type, value_type, key_compare> test)
+        {
+                if (!ptr || ptr == test.getNULL())
+                {
+                        return;
+                }
+                space += 4;
+                real_print(ptr->m_right, space, test);
+                std::cout
+                        << (ptr->m_color == ft::s_black ? "\033[90m" : "\033[31m") << std::setw(space)
+                        << ptr->p.first << "\033[0m" << std::endl;
+                // getwchar();
+                real_print(ptr->m_left, space, test);
+        }
+
 			template <class InputIterator>
 			map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
 			{
+				_comp = comp;
+				_alloc = alloc;
 				while (first != last)
 				{
+					real_print(_tree.getRoot(), 0, _tree);
 					insert(*first);
+					std::cout << "CONSTRUCTOR RELOU: " << first->first << "\n";
 					first++;
 				}
-
 			}
 
 			iterator	begin(void)
@@ -230,9 +310,11 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 
 			iterator end()
 			{
-				iterator tmp(_tree.maxD(_tree.getRoot()));
+				Node *tmp = _tree.maxNode(_tree.getRoot());
+				//std::cout << "ENEDNENNEDNEDNEDNEDNEDNNED: " << tmp->p.first << "\n";
+				iterator it(tmp);
 				//tmp->second = 0;
-				return (tmp);
+				return (it);
 			}
 			const_iterator end() const
 			{
@@ -278,8 +360,8 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				//	return (make_pair(iterator(val), false));
 				_tree.insertNode(val);
 				//std::cout << "insert val: " << val.first << "\n";
-					iterator tmp(_tree.searchRetNode(val.first));
-					return (make_pair(tmp, true));
+				iterator tmp(_tree.searchRetNode(val.first));
+				return (make_pair<iterator, bool>(tmp, true));
 				//return iterator(val);
 			}
 
@@ -293,22 +375,107 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			
 			iterator	lower_bound(const key_type& k)
 			{
-				return (iterator(_tree.searchRetNode(k)));
+				if (_tree.search(k))
+				{
+					Node *tmp = _tree.searchRetNode(k);
+					iterator it(tmp);
+					return it;
+				}
+				else
+				{
+					Node *tmp = _tree.maxD(_tree.getRoot());
+					Node *tmp2 = _tree.minD(_tree.getRoot());
+					if (tmp->p.first - k < tmp2->p.first - k)
+						return (this->end());
+					else
+						return (this->begin());
+				}
+				return (0);
 			}
 
 			const_iterator	lower_bound(const key_type& k) const
 			{
-				return (const_iterator(_tree.searchRetNode(k)));
+				if (_tree.search(k))
+				{
+					Node *tmp = _tree.searchRetNode(k);
+					const_iterator it(tmp);
+					return it;
+				}
+				else
+				{
+					Node *tmp = _tree.maxD(_tree.getRoot());
+					Node *tmp2 = _tree.minD(_tree.getRoot());
+					if (tmp->p.first - k < tmp2->p.first - k)
+						return (this->end());
+					else
+						return (this->begin());
+				}
+				return (0);
 			}
 
 			iterator	upper_bound(const key_type& k)
 			{
-				return (iterator(_tree.searchRetNode(k))++);
+				if (_tree.search(k))
+				{
+					Node *tmp = _tree.searchRetNode(k);
+					iterator it(tmp);
+					return it;
+				}
+				else
+				{
+					Node *tmp = _tree.maxD(_tree.getRoot());
+					Node *tmp2 = _tree.minD(_tree.getRoot());
+					if (tmp->p.first - k < tmp2->p.first - k)
+						return (this->end());
+					else
+						return (this->begin());
+				}
+				return (0);
+				/*if (_tree.search(k))
+				{
+					Node *tmp = _tree.searchRetNode(k);
+					if (tmp == _tree.maxD(_tree.getRoot()))
+						return (this->end());
+					else
+						return (iterator(_tree.searchRetNode(k))++);
+				}
+				return (this->end());*/
 			}
 
 			const_iterator	upper_bound(const key_type& k) const
 			{
-				return (const_iterator(_tree.searchRetNode(k))++);
+				if (_tree.search(k))
+				{
+					Node *tmp = _tree.searchRetNode(k);
+					const_iterator it(tmp);
+					return it;
+				}
+				else
+				{
+					Node *tmp = _tree.maxD(_tree.getRoot());
+					Node *tmp2 = _tree.minD(_tree.getRoot());
+					if (tmp->p.first - k < tmp2->p.first - k)
+						return (this->end());
+					else
+						return (this->begin());
+				}
+				return (0);
+			}
+
+			iterator	find(const key_type& k)
+			{
+				if (_tree.search(k))
+					return (iterator(_tree.searchRetNode(k)));
+				else
+					return this->end();
+			}
+
+			const_iterator	find(const key_type& k) const
+			{
+				if (_tree.search(k))
+					return (const_iterator(_tree.searchRetNode(k)));
+				else
+					return this->end();
 			}
 			
 			size_type	count(const key_type &k) const
@@ -331,6 +498,12 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				return (true);
 			}
 
+			key_compare	key_comp() const
+			{
+				return _comp;
+			}
+
+
 			size_type	size(void) const
 			{
 				size_type s = _tree.countElem(_tree.getRoot(), 1);
@@ -348,25 +521,31 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				return _alloc.max_size();
 			}
 
-			mapped_type &operator[](const key_type &k)
+			mapped_type& operator[] (const key_type& k)
 			{
-				return searchRetVal(k);
+				ft::pair<iterator,bool> tmp = this->insert(ft::make_pair(k, mapped_type()));
+				return ((*(tmp.first)).second);
 			}
 
 			//template <class Key, class T, class Compare, class Alloc>
-				class value_compare
-				{   // in C++98, it is required to inherit binary_function<value_type,value_type,bool>
-					protected:
-						Compare comp;
+			class value_compare
+			{   // in C++98, it is required to inherit binary_function<value_type,value_type,bool>
+				protected:
+					Compare comp;
 
-						typedef bool result_type;
-						typedef value_type first_argument_type;
-						typedef value_type second_argument_type;
-						bool operator() (const value_type& x, const value_type& y) const
-						{
-							return comp(x.first, y.first);
-						}
-				};
+					typedef bool result_type;
+					typedef value_type first_argument_type;
+					typedef value_type second_argument_type;
+					bool operator() (const value_type& x, const value_type& y) const
+					{
+						return comp(x.first, y.first);
+					}
+			};
+
+			value_compare	value_comp()const
+			{
+				return (value_compare(_comp));
+			}
 			map & operator=(const map & egal)
 			{
 				_tree = egal._tree;
@@ -383,6 +562,7 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			//RBT _tree;
 			//RBT<key_type, value_compare> _tree;
 			Alloc	_alloc;
+			Compare _comp;
 	};
 }
 

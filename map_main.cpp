@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 16:38:12 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/02/28 17:12:50 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/01 18:56:43 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ int	main(void)
 	std::cout << "\n";
 	std::cout << "real end test (first): " << real.end()->first << "\n";
 	std::cout << "real end test (second): " << real.end()->second << "\n";
-	std::cout << "ft begin test (first): " << ft.end()->first << "\n";
-	std::cout << "ft begin test (second): " << ft.end()->second << "\n";
+	std::cout << "ft end test (first): " << ft.end()->first << "\n";
+	std::cout << "ft end test (second): " << ft.end()->second << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
@@ -118,18 +118,18 @@ int	main(void)
 	//real_print(ft._tree.getRoot(), 0, ft._tree);
 
 	std::map<int,int>::iterator itlow,itup;
-	itlow = real.lower_bound(54);
+	itlow = real.lower_bound(-10);
 	std::cout << "real test lower first: " << itlow->first << "\n";
 	std::cout << "real test lower second: " << itlow->second << "\n";
-	itlow = real.upper_bound(54);
+	itlow = real.upper_bound(-10);
 	std::cout << "real test upper first: " << itlow->first << "\n";
 	std::cout << "real test upper second: " << itlow->second << "\n";
 
 	ft::map<int,int>::iterator itlow2,itup2;
-	itlow2 = ft.lower_bound(54);
+	itlow2 = ft.lower_bound(-10);
 	std::cout << "ft test lower first: " << itlow2->first << "\n";
 	std::cout << "ft test lower second: " << itlow2->second << "\n";
-	itlow2 = ft.upper_bound(54);
+	itlow2 = ft.upper_bound(-10);
 	std::cout << "ft test upper first: " << itlow2->first << "\n";
 	std::cout << "ft test upper second: " << itlow2->second << "\n";
 
