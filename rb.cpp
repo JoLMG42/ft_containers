@@ -44,7 +44,7 @@
 		real_print(ptr->m_right, space, test);
 		std::cout
 			<< (ptr->m_color == ft::s_black ? "\033[90m" : "\033[31m") << std::setw(space)
-			<< ptr->p.second << "\033[0m" << std::endl;
+			<< ptr->p.first << "\033[0m" << std::endl;
 		// getwchar();
 		real_print(ptr->m_left, space, test);
 	}
@@ -100,6 +100,12 @@ int	main(void)
 	//real_print(M._tree.getRoot(), 0, M._tree);
 	M.clear();
 	std::cout << "SIZZEEEE after clear(): " << M.size() << "\n";*/
+	/*M._tree.insertNode(ft::make_pair(1, 8));
+	real_print(M._tree.getRoot(), 0, M._tree);
+	M._tree.insertNode(ft::make_pair(2, 9));
+	real_print(M._tree.getRoot(), 0, M._tree);
+	M._tree.insertNode(ft::make_pair(3, 10));
+	real_print(M._tree.getRoot(), 0, M._tree);*/
 	M._tree.insertNode(ft::make_pair(50, 50));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";

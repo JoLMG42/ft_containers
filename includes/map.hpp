@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 15:54:03 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/03/01 19:59:04 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/06 19:07:22 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,161 +40,80 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				{
 				}
 
-				V *operator=(const V &egal)
+				map_iterator	&operator=(const V &egal)
 				{
 					//std::cout << "ICICICICICICIC: " << _ptr->m_right << "\n";
 					std::cout << "OPERATOR=\n";
-					_ptr->_alloc.deallocate();
-					_ptr->alloc.allocate(1);
-					_ptr->p = egal.p;
-					_ptr->_alloc = egal._alloc;
+					_ptr = egal._ptr;
+					return *this;
 				}
 				pointer	operator->() const
 				{
 					return &this->_ptr->p;
 				}
 
-				/*map_iterator &operator++()
+				map_iterator &operator++()
+				{
+					if (_ptr == 0)
 					{
-						if (_ptr != NULL)
-						{
-							if (_ptr->m_parent == NULL)
-								return *this;
-							if (_ptr->m_parent->m_right == _ptr)
-								return *this;
-						}
-						if (_ptr->m_right != 0)
-						{
-							_ptr = _ptr->m_right;
-							while (_ptr->m_left != 0)
-								_ptr = _ptr->m_left;
-						}
-						else if (_ptr->m_parent->m_left ==_ptr)
+						if (_ptr->m_parent == 0 || _ptr->m_parent->m_right == _ptr)
+							return *this;
+					}
+					if (_ptr->m_right != 0)
+					{
+						_ptr = _ptr->m_right;
+						while (_ptr->m_left != 0)
+							_ptr = _ptr->m_left;
+					}
+					else if (_ptr->m_parent->m_left ==_ptr)
+						_ptr = _ptr->m_parent;
+					else
+					{
+						while (_ptr->m_parent->m_right ==_ptr)
 							_ptr = _ptr->m_parent;
-						else
-						{
-							while (_ptr->m_parent && _ptr->m_parent->m_right ==_ptr)
-								_ptr = _ptr->m_parent;
-							_ptr = _ptr->m_parent;
-						}
-						return *this;
-					};
+						_ptr = _ptr->m_parent;
+					}
+					return *this;
+				};
 
 				map_iterator operator++(int)
 				{
-					map_iterator tmp(*this);++(*this);return tmp;
-				}*/
-
-				V	*operator--(int)
-				{
-					if (_ptr && _ptr->m_right)
-					{
-						V  *tmp = _ptr->m_right;
-						while (tmp->m_left)
-						{
-							tmp = tmp->m_left;
-						}
-						_ptr = tmp;
-						return tmp;
-					}
-					else if (_ptr)
-					{
-						V *tmp = _ptr->m_parent;
-						while (tmp)
-						{
-							if (tmp->p.first > _ptr->p.first)
-							{
-								_ptr = tmp;
-								return tmp;
-							}
-							tmp = tmp->m_parent;
-						}
-					}
-					return (0);
+					map_iterator tmp(*this);
+					++(*this);
+					return tmp;
 				}
 
-				V	*operator--()
+				map_iterator &operator--()
 				{
-					if (_ptr->m_right)
+					if (!_ptr->m_right && !_ptr->m_left && !_ptr->m_parent)
+						return *this;
+					if (_ptr == NULL)
 					{
-						V  *tmp = _ptr->m_right;
-						while (tmp->m_left)
-						{
-							tmp = tmp->m_left;
-						}
-						_ptr = tmp;
-						return tmp;
+						if (_ptr->m_parent == 0 || _ptr->m_parent->m_left == _ptr)
+							return *this;
 					}
+					if (_ptr->m_left != NULL)
+					{
+						_ptr = _ptr->m_left;
+						while (_ptr->m_right != 0)
+							_ptr = _ptr->m_right;
+					}
+					else if (_ptr->m_parent->m_right == _ptr)
+						_ptr = _ptr->m_parent;
 					else
 					{
-						V *tmp = _ptr->m_parent;
-						while (tmp)
-						{
-							if (tmp->p.first > _ptr->p.first)
-							{
-								_ptr = tmp;
-								return tmp;
-							}
-							tmp = tmp->m_parent;
-						}
+						while (_ptr->m_parent->m_left ==_ptr)
+							_ptr = _ptr->m_parent;
+						_ptr = _ptr->m_parent;
 					}
-					return (0);
-				}
+					return *this;
+				};
 
-				V	*operator++(int)
+				map_iterator operator--(int)
 				{
-					if (_ptr && _ptr->m_right)
-					{
-						V  *tmp = _ptr->m_right;
-						while (tmp->m_left)
-						{
-							tmp = tmp->m_left;
-						}
-						_ptr = tmp;
-						return tmp;
-					}
-					else if (_ptr)
-					{
-						V *tmp = _ptr->m_parent;
-						while (tmp)
-						{
-							if (tmp->p.first > _ptr->p.first)
-							{
-								_ptr = tmp;
-								return tmp;
-							}
-							tmp = tmp->m_parent;
-						}
-					}
-					return (0);
-				}
-
-				V	*operator++()
-				{
-					if (_ptr->m_right)
-					{
-						V  *tmp = _ptr->m_right;
-						while (tmp->m_left)
-						{
-							tmp = tmp->m_left;
-						}
-						_ptr = tmp;
-						return tmp;
-					}
-					else
-					{
-						V *tmp = _ptr->m_parent;
-						while (tmp)
-						{
-							if (tmp->p.first > _ptr->p.first)
-							{
-								_ptr = tmp;
-								return tmp;
-							}
-							tmp = tmp->m_parent;
-						}
-					}
-					return (0);
+					map_iterator tmp(*this);
+					--(*this);
+					return tmp;
 				}
 
 				reference	operator*(void)
@@ -240,7 +159,7 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			//struct Node;
 			typedef Key					key_type;
 			typedef	T					mapped_type;
-			typedef pair<const key_type, mapped_type>	value_type;
+			typedef ft::pair<const key_type, mapped_type>	value_type;
 			typedef	Compare					key_compare;
 			typedef	size_t					size_type;
 			typedef	Alloc					allocator_type;
@@ -252,11 +171,23 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			typedef	typename RBT<key_type, mapped_type, value_type>::template Node<key_type> Node;
 			typedef map_iterator<value_type, Node>					iterator;
 			typedef map_iterator<const value_type, Node>				const_iterator;
+			typedef typename allocator_type::template rebind<Node>::other		Node_allocator;
+
   
 			explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
 			{
 				_alloc = alloc;
 				_comp = comp;
+				_end = _tree.newNode();
+				//_end = _nodeAlloc.allocate(1);
+				//_nodeAlloc.construct(_end, value_type());
+				//_tree.setEndNode();
+				/*_last = _tree.newNode();
+				_last->m_left = _tree.getNULL();
+				_last->m_right = _tree.getNULL();
+				_last->m_parent = _tree.getRoot();
+				_tree.getRoot()->m_right = _last;*/
+				//_tree.getRoot()->m_right = _last;
 				//RBT<key_type, value_compare>	_tree({});
 				//RBT<key_type, mapped_type, value_type, key_compare, allocator_type>	_tree({});
 				//RBT _tree;
@@ -287,6 +218,15 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			{
 				_comp = comp;
 				_alloc = alloc;
+				_end = _tree.newNode();
+				//_end = _tree.newNode();
+				//_end = _nodeAlloc.allocate(1);
+				//_nodeAlloc.construct(_end, value_type());
+				/*_last = _tree.newNode();
+				_last->m_left = _tree.getNULL();
+				_last->m_right = _tree.getNULL();
+				_last->m_parent = _tree.getRoot();
+				_tree.getRoot()->m_right = _tree.getLast();*/
 				while (first != last)
 				{
 					real_print(_tree.getRoot(), 0, _tree);
@@ -294,11 +234,14 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 					std::cout << "CONSTRUCTOR RELOU: " << first->first << "\n";
 					first++;
 				}
+				_tree.setEndNode(_end);
 			}
 
 			iterator	begin(void)
 			{
+				//_tree.deleteEndNode(_end);
 				iterator tmp(_tree.minD(_tree.getRoot()));
+				//_tree.setEndNode(_end);
 				return tmp;
 			}
 
@@ -310,40 +253,43 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 
 			iterator end()
 			{
-				Node *tmp = _tree.maxNode(_tree.getRoot());
+				//Node *tmp = _tree.maxNode(_tree.getRoot());
 				//std::cout << "ENEDNENNEDNEDNEDNEDNEDNNED: " << tmp->p.first << "\n";
-				iterator it(tmp);
+				//iterator it(tmp);
 				//tmp->second = 0;
-				return (it);
+				return (iterator(_end));
 			}
 			const_iterator end() const
 			{
-				const_iterator tmp(_tree.maxD(_tree.getRoot()));
+				//const_iterator tmp(_tree.maxD(_tree.getRoot()));
 				//tmp->second = 0;
-				return (tmp);
+				return (const_iterator(_end));
 			}
 
-			pair<const_iterator,const_iterator> equal_range (const key_type& k) const
+			ft::pair<const_iterator,const_iterator>	equal_range(const key_type& k) const
 			{
-				///   FAIRE LE CAS OU CA TROUVE PAS ///
-				return make_pair(const_iterator(_tree.searchRetNode(k)), const_iterator(_tree.searchRetNode(k))++);
+				return (ft::pair<const_iterator,const_iterator>(lower_bound(k), upper_bound(k)));
 			}
 
-			pair<iterator,iterator>	equal_range (const key_type& k)
+			ft::pair<iterator,iterator>	equal_range(const key_type& k)
 			{
-				///   FAIRE LE CAS OU CA TROUVE PAS ///
-				return make_pair(iterator(_tree.searchRetNode(k)), iterator(_tree.searchRetNode(k))++);
+				return (ft::pair<iterator,iterator>(lower_bound(k), upper_bound(k)));
 			}
 
 			void	erase(iterator position)
 			{
+				_tree.deleteEndNode(_end);
 				_tree.deleteNode(_tree.getRoot(), _tree.searchRetVal(position->first));
+				_tree.setEndNode(_end);
 
 			}
 
 			size_type	erase(const key_type& k)
 			{
+				std::cout << "PAS COMPRENDRE MOI ROOT->VALUE dans erase: " << _tree.getRoot()->p.first << "\n";
+				_tree.deleteEndNode(_end);
 				return (_tree.deleteNode(_tree.getRoot(), _tree.searchRetVal(k)));
+				_tree.setEndNode(_end);
 			}
 
 			void	erase(iterator first, iterator last)
@@ -358,10 +304,26 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			pair<iterator, bool>	insert(const value_type &val)
 			{
 				//	return (make_pair(iterator(val), false));
+				std::cout << "AFFICHAGE AVANT DELETE END\n";
+				//real_print(_tree.getRoot(), 0, _tree);
+				//if (_tree.getSize() > 0)
+				real_print(_tree.getRoot(), 0, _tree);
+				_tree.deleteEndNode(_end);
+				std::cout << "AFFICHAGE APRES DELETE END\n";
+				real_print(_tree.getRoot(), 0, _tree);
 				_tree.insertNode(val);
+				std::cout << "AFFICHAGE APRES INSERT END\n";
+				//real_print(_tree.getRoot(), 0, _tree);
 				//std::cout << "insert val: " << val.first << "\n";
-				iterator tmp(_tree.searchRetNode(val.first));
-				return (make_pair<iterator, bool>(tmp, true));
+				//iterator tmp(_tree.searchRetNode(val.first));
+				value_type	*tmp;
+				tmp = _alloc.allocate(1);
+				_alloc.construct(tmp, val);
+				Node *node = _nodeAlloc.allocate(1);
+				_nodeAlloc.construct(node, *tmp);
+				_tree.setEndNode(_end);
+				iterator it(node);
+				return (make_pair<iterator, bool>(it, true));
 				//return iterator(val);
 			}
 
@@ -375,47 +337,47 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			
 			iterator	lower_bound(const key_type& k)
 			{
-				if (_tree.search(k))
+				iterator first = this->begin();
+				iterator last = this->end();
+
+				while (first != last)
 				{
-					Node *tmp = _tree.searchRetNode(k);
-					iterator it(tmp);
-					return it;
+					if (!_comp((*first).first, k))
+						break ;
+					first++;
 				}
-				else
-				{
-					Node *tmp = _tree.maxD(_tree.getRoot());
-					Node *tmp2 = _tree.minD(_tree.getRoot());
-					if (tmp->p.first - k < tmp2->p.first - k)
-						return (this->end());
-					else
-						return (this->begin());
-				}
-				return (0);
+				return first;
 			}
 
 			const_iterator	lower_bound(const key_type& k) const
 			{
-				if (_tree.search(k))
+				const_iterator first = this->begin();
+				const_iterator last = this->end();
+
+				while (first != last)
 				{
-					Node *tmp = _tree.searchRetNode(k);
-					const_iterator it(tmp);
-					return it;
+					if (!_comp((*first).first, k))
+						break ;
+					first++;
 				}
-				else
-				{
-					Node *tmp = _tree.maxD(_tree.getRoot());
-					Node *tmp2 = _tree.minD(_tree.getRoot());
-					if (tmp->p.first - k < tmp2->p.first - k)
-						return (this->end());
-					else
-						return (this->begin());
-				}
-				return (0);
+				return first;
 			}
 
 			iterator	upper_bound(const key_type& k)
 			{
-				if (_tree.search(k))
+				iterator first = this->begin();
+				iterator last = this->end();
+
+				while (first != last)
+				{
+					if (_comp(k, (*first).first))
+					{
+						break ;
+					}
+					first++;
+				}
+				return first;
+				/*if (_tree.search(k))
 				{
 					Node *tmp = _tree.searchRetNode(k);
 					iterator it(tmp);
@@ -430,7 +392,8 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 					else
 						return (this->begin());
 				}
-				return (0);
+				return (0);*/
+
 				/*if (_tree.search(k))
 				{
 					Node *tmp = _tree.searchRetNode(k);
@@ -444,22 +407,16 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 
 			const_iterator	upper_bound(const key_type& k) const
 			{
-				if (_tree.search(k))
+				const_iterator first = this->begin();
+				const_iterator last = this->end();
+
+				while (first != last)
 				{
-					Node *tmp = _tree.searchRetNode(k);
-					const_iterator it(tmp);
-					return it;
+					if (_comp(k, (*first).first))
+						break ;
+					first++;
 				}
-				else
-				{
-					Node *tmp = _tree.maxD(_tree.getRoot());
-					Node *tmp2 = _tree.minD(_tree.getRoot());
-					if (tmp->p.first - k < tmp2->p.first - k)
-						return (this->end());
-					else
-						return (this->begin());
-				}
-				return (0);
+				return first;
 			}
 
 			iterator	find(const key_type& k)
@@ -546,11 +503,34 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			{
 				return (value_compare(_comp));
 			}
-			map & operator=(const map & egal)
+
+			map	&operator=(const map& egal)
 			{
-				_tree = egal._tree;
+				_size = egal._size;
+				_tree.deleteEndNode();
+				Node *newN = NULL;
+
+				map::const_iterator start = egal.begin();
+				map::const_iterator fin = egal.end();
+
+				//this->recursive_assignment(_base_tree, &new_base, x_first, x_last);
+
+				value_type	*tmp_pair;
+				Node		*tmp_node;
+				while (start != fin)
+				{
+					tmp_pair = _alloc.allocate(1);
+					_alloc.construct(tmp_pair, *start);
+					tmp_node = _nodeAlloc.allocate(1);
+					_nodeAlloc.construct(tmp_node, tmp_pair);
+					++start;
+					_tree.insertNode(tmp_node->p);
+				}
+				_tree.setRoot() = newN;
+				_tree.setEndNode(_end);
 				return *this;
 			}
+
 		//	template <class key_type, value_compare>
 		//	RBT<key_type, value_compare>	getTree(void)
 		//	{
@@ -561,8 +541,11 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			RBT<key_type, mapped_type, value_type, key_compare>	_tree;
 			//RBT _tree;
 			//RBT<key_type, value_compare> _tree;
+			Node_allocator	_nodeAlloc;
 			Alloc	_alloc;
 			Compare _comp;
+			Node *_end;
+			size_t	_size;
 	};
 }
 

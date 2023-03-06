@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 16:38:12 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/03/01 18:56:43 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/06 18:39:44 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,44 +35,58 @@
 int	main(void)
 {
 	std::map<int, int> real;
-	real.insert(std::make_pair(1, 8));
-	real.insert(std::make_pair(2, 9));
-	real.insert(std::make_pair(3, 10));
+	real.insert(std::make_pair(5, 8));
+	real.insert(std::make_pair(1, 3));
+	real.insert(std::make_pair(7, 10));
+	real.insert(std::make_pair(3, 9));
 	real.insert(std::make_pair(4, 11));
 	real.insert(std::make_pair(54, 110));
-	real.insert(std::make_pair(0, 3));
 	std::cout << "real begin test (first): " << real.begin()->first << "\n";
 	std::cout << "real begin test (second): " << real.begin()->second << "\n";
 	ft::map<int, int> ft;
-	ft.insert(ft::make_pair(1, 8));
-	ft.insert(ft::make_pair(2, 9));
-	ft.insert(ft::make_pair(3, 10));
+	ft.insert(ft::make_pair(5, 8));
+	ft.insert(ft::make_pair(1, 3));
+	ft.insert(ft::make_pair(7, 10));
+	ft.insert(ft::make_pair(3, 9));
 	ft.insert(ft::make_pair(4, 11));
 	ft.insert(ft::make_pair(54, 110));
-	ft.insert(ft::make_pair(0, 3));
 	std::cout << "ft begin test (first): " << ft.begin()->first << "\n";
 	std::cout << "ft begin test (second): " << ft.begin()->second << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
+
+	std::map<int,int>::iterator E = real.end();
+	ft::map<int,int>::iterator E2 = ft.end();
+
+	E--;
+	E2--;
+
 	std::cout << "real end test (first): " << real.end()->first << "\n";
 	std::cout << "real end test (second): " << real.end()->second << "\n";
 	std::cout << "ft end test (first): " << ft.end()->first << "\n";
 	std::cout << "ft end test (second): " << ft.end()->second << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
+	std::cout << "real E (first): " << E->first << "\n";
+	std::cout << "real E (second): " << E->second << "\n";
+	std::cout << "ft E2 (first): " << E2->first << "\n";
+	std::cout << "ft E2 (second): " << E2->second << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
 
-	std::cout << "real equal_range test (first): " << real.equal_range(2).first->first << "\n";
-	std::cout << "real equal_range test (first): " << real.equal_range(2).first->second << "\n";
-	std::cout << "real equal_range test (first): " << real.equal_range(2).second->first << "\n";
-	std::cout << "real equal_range test (first): " << real.equal_range(2).second->second << "\n";
-	std::cout << "ft equal_range test (first): " << ft.equal_range(2).first->first << "\n";
-	std::cout << "ft equal_range test (first): " << ft.equal_range(2).first->second << "\n";
-	std::cout << "ft equal_range test (first): " << ft.equal_range(2).second->first << "\n";
-	std::cout << "ft equal_range test (first): " << ft.equal_range(2).second->second << "\n";
+ 	//ft._tree.deleteEndNode(NULL);
+	real_print(ft._tree.getRoot(), 0, ft._tree);
+
+	std::cout << "real equal_range test (first): " << real.equal_range(7).first->first << "\n";
+	std::cout << "real equal_range test (first): " << real.equal_range(7).first->second << "\n";
+	std::cout << "real equal_range test (first): " << real.equal_range(7).second->first << "\n";
+	std::cout << "real equal_range test (first): " << real.equal_range(7).second->second << "\n";
+	std::cout << "ft equal_range test (first): " << ft.equal_range(7).first->first << "\n";
+	std::cout << "ft equal_range test (first): " << ft.equal_range(7).first->second << "\n";
+	std::cout << "ft equal_range test (first): " << ft.equal_range(7).second->first << "\n";
+	std::cout << "ft equal_range test (first): " << ft.equal_range(7).second->second << "\n";
 	
 	std::cout << "\n";
 	std::cout << "\n";
@@ -84,14 +98,14 @@ int	main(void)
 	std::cout << "test: " << it->first << "\n";
 	it++;
 	it++;
-	it++;
+	++it;
 	it++;
 	it++;
 	std::cout << "test ++ : " << it->first << "\n";
 	std::cout << "test: " << my->first << "\n";
 	my++;
 	my++;
-	my++;
+	++my;
 	my++;
 	my++;
 	std::cout << "test ++ : " << my->first << "\n";
@@ -103,16 +117,18 @@ int	main(void)
 	std::cout << "it = " << it->first << "\n";
 	std::cout << "my = " << my->first << "\n";
 	std::cout << "Erase it and my\n";
-	real.erase(it);
-	ft.erase(my);
+	real_print(ft._tree.getRoot(), 0, ft._tree);
+	std::cout << "PAS COMPRENDRE MOI ROOT->VALUE: " << ft._tree.getRoot() << "\n";
+	real.erase(4);
+	ft.erase(4);
 	real_print(ft._tree.getRoot(), 0, ft._tree);
 	it = real.begin();
 	my = ft.begin();
 	std::cout << "it = " << it->first << "\n";
 	std::cout << "my = " << my->first << "\n";
 	
-	real.insert(std::make_pair(1, 8));
-	ft.insert(ft::make_pair(1, 8));
+	//real.insert(std::make_pair(1, 8));
+	//ft.insert(ft::make_pair(1, 8));
 	//real.erase(real.begin(), real.end());
 	//ft.erase(ft.begin(), ft.end());
 	//real_print(ft._tree.getRoot(), 0, ft._tree);
