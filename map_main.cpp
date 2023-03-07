@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 16:38:12 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/03/06 18:39:44 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/07 19:38:28 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int	main(void)
 	std::cout << "\n";
 
  	//ft._tree.deleteEndNode(NULL);
-	real_print(ft._tree.getRoot(), 0, ft._tree);
+//	real_print(ft._tree.getRoot(), 0, ft._tree);
 
 	std::cout << "real equal_range test (first): " << real.equal_range(7).first->first << "\n";
 	std::cout << "real equal_range test (first): " << real.equal_range(7).first->second << "\n";
@@ -117,11 +117,11 @@ int	main(void)
 	std::cout << "it = " << it->first << "\n";
 	std::cout << "my = " << my->first << "\n";
 	std::cout << "Erase it and my\n";
-	real_print(ft._tree.getRoot(), 0, ft._tree);
+//	real_print(ft._tree.getRoot(), 0, ft._tree);
 	std::cout << "PAS COMPRENDRE MOI ROOT->VALUE: " << ft._tree.getRoot() << "\n";
-	real.erase(4);
-	ft.erase(4);
-	real_print(ft._tree.getRoot(), 0, ft._tree);
+//	real.erase(4);
+//	ft.erase(4);
+//	real_print(ft._tree.getRoot(), 0, ft._tree);
 	it = real.begin();
 	my = ft.begin();
 	std::cout << "it = " << it->first << "\n";
@@ -148,5 +148,30 @@ int	main(void)
 	itlow2 = ft.upper_bound(-10);
 	std::cout << "ft test upper first: " << itlow2->first << "\n";
 	std::cout << "ft test upper second: " << itlow2->second << "\n";
+
+	std::cout << "\n";
+	std::cout << "\n";
+	std::cout << "\n";
+	std::cout << "\n";
+
+	ft::map<int, int>::iterator po = ft.begin();
+	ft::map<int, int>::iterator pa = ft.begin();
+	ft::map<int, int>::iterator la = ft.end();
+
+	pa++;
+
+	ft.insert(pa, ft::make_pair(6, 6));
+	ft.insert(pa, ft::make_pair(7, 6));
+	ft.insert(pa, ft::make_pair(8, 6));
+	ft.insert(pa, ft::make_pair(9, 6));
+	ft.insert(pa, ft::make_pair(16, 6));
+	ft.insert(pa, ft::make_pair(26, 6));
+	ft.insert(pa, ft::make_pair(36, 6));
+	ft.insert(pa, ft::make_pair(46, 6));
+	while (po != la)
+	{
+		std::cout << "TEST: " << po->first << "\n";
+		po++;
+	}
 
 }
