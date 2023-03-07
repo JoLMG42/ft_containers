@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 11:39:45 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/03/06 19:05:44 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/07 12:00:44 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ class	RBT
 			 tmp->m_left->m_parent = node;
 		 }
 		 tmp->m_parent = node->m_parent;
-		 if (node->m_parent == NULLnode)
+		 if (node->m_parent == NULL)
 			 _root = tmp;
 		 else if (node == node->m_parent->m_left)
 			 node->m_parent->m_left = tmp;
@@ -117,7 +117,7 @@ class	RBT
 			tmp->m_right->m_parent = node;
 		}
 		tmp->m_parent = node->m_parent;
-		if (node->m_parent == NULLnode)
+		if (node->m_parent == NULL)
 		{
 			_root = tmp;
 		}
@@ -196,7 +196,8 @@ class	RBT
 					leftRotate(newN->m_parent->m_parent);
 					std::cout << "APRES LEFT ROTATE DFANS FIX INSERT newN: " << newN->p.first << "\n";
 					std::cout << "APRES LEFT ROTATE DFANS FIX INSERT newN right: " << newN-> m_parent->p.first << "\n";
-					//std::cout << "APRES LEFT ROTATE DFANS FIX INSERT newN left: " << newN->m_parent->m_left->p.first << "\n";
+					std::cout << "APRES LEFT ROTATE DFANS FIX INSERT newN left: " << newN->m_parent->m_left->p.first << "\n";
+
 				}
 			}
 			if (newN == _root)
@@ -221,6 +222,8 @@ class	RBT
 	{
 		Node<T>	*newN = newNode(node);
 		
+		if (_root)
+			_root->m_parent = NULL;
 		/*newN->key = k;*/
 		newN->m_parent = NULL;
 		newN->m_left = NULL;
@@ -252,11 +255,7 @@ class	RBT
 		//std::cout << "yyyy second: " << y->p.second << "\n";
 		std::cout << "SIZEEEEE: " << _size << "\n";
 		newN->m_parent = y;
-		if (newN->m_parent)
-		{
-			std::cout << "NEWN PARENT COLOR dans mid insert (if): " << newN->m_parent->m_color << "\n";
-		}
-		if (_size == 0)
+		if (_size == 0 || y == NULL)
 		{
 			std::cout << "ppppppp\n";
 			newN->m_color = s_black;
@@ -439,16 +438,14 @@ class	RBT
 		std::cout << "ooooo: " << tmp->key << "\n";
 		if (tmp->key == key)
 		{
+			_size--;
 			std::cout << "FIND\n";
 			y =  newNode(tmp->p);
 			int y_color = y->m_color;
 			if (tmp->m_left == NULL)
 			{
 				std::cout << "laaaaa\n";
-				if (tmp->m_right == NULL)
-					x = NULLnode;
-				else
-					x = tmp->m_right;
+				x = tmp->m_right;
 				swap(tmp, tmp->m_right);
 			}
 			else if (tmp->m_right == NULL)
@@ -496,11 +493,11 @@ class	RBT
 				y->m_color = tmp->m_color;
 			}
 			delete tmp;
-		//	if (y_color == s_black)
-		//	{
+			if (y_color == s_black)
+			{
 				std::cout << "go in fix deletion\n";
 				deletionFix(x);
-		//	}
+			}
 			return (1);
 		}
 		else	
@@ -660,7 +657,7 @@ class	RBT
 		//Node<T>	*tmp_min = RBT_min(_root);
 		Node<T>	*tmp_max = RetEnd(_root, end);
 
-		std::cout << "DANS DELETE END VALUE: " << tmp_max->p.first << "\n";
+		//std::cout << "DANS DELETE END VALUE: " << tmp_max->p.first << "\n";
 		//if (temp_min != 0)
 		//	temp_min->_left = 0;
 		if (tmp_max != 0)
@@ -689,7 +686,7 @@ class	RBT
 		//Node<T> *tmp_min = RBT_min(_root);
 		Node<T> *tmp_max = RetEnd(_root, end);
 
-		std::cout << "DANS SET END: " << tmp_max->p.first << "\n";
+		//std::cout << "DANS SET END: " << tmp_max->p.first << "\n";
 		/*if (tmp_min != 0)
 		{
 			tmp_min->_left = nodemin;
@@ -771,6 +768,11 @@ class	RBT
 	size_t	getSize(void)
 	{
 		return _size;
+	}
+
+	void	setRoot(Node<T> *root)
+	{
+		_root = root;
 	}
 	private:
 		Node<T> *_root;

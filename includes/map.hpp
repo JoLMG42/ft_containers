@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 15:54:03 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/03/06 19:07:22 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/07 12:50:39 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 					return tmp;
 				}
 
-				reference	operator*(void)
+				reference	operator*(void) const
 				{
 					return _ptr->p;
 				}
@@ -193,9 +193,29 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				//RBT _tree;
 			}
 
-			map(const map& x)
+			map(const map& cpy)
 			{
-				*this = x;
+				_comp = cpy._comp;
+				_alloc = cpy._alloc;
+				_nodeAlloc = cpy._nodeAlloc;
+				_size = cpy._size;
+				_end = _tree.newNode();
+
+				value_type	*tmp_value;
+				Node		*tmp_node;
+				const_iterator first = cpy.begin();
+				const_iterator last = cpy.end();
+
+				while (first != last)
+				{
+					tmp_value = _alloc.allocate(1);
+					_alloc.construct(tmp_value, *first);
+					tmp_node = _nodeAlloc.allocate(1);
+					_nodeAlloc.construct(tmp_node, *tmp_value);
+					insert(*first);
+					++first;
+				}
+				_tree.setEndNode(_end);
 			}
 
 			        void    real_print(Node *ptr, int space, RBT<key_type, mapped_type, value_type, key_compare> test)
@@ -327,13 +347,37 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				//return iterator(val);
 			}
 
-			/*iterator	insert(iterator position, const value_type& val)
+			iterator	insert(iterator position, const value_type& val)
 			{
-				_tree.insertNode(val);
-				iterator tmp(_tree.searchRetNode(val.first));
-				return tmp;
-					
-			}*/
+				_tree.deleteEndNode(_end);
+				RBT<key_type, mapped_type, value_type, key_compare>	tmp;
+				iterator	first = this->begin();
+				iterator	last = this->end();
+				while (first != last)
+				{
+					if (val > *(--first) && val < *first)
+						insert(val);
+					else
+					{
+						insert(*first);
+						first++;
+					}
+				}
+				_tree.setEndNode(_end);
+				//_tree.insertNode(val);
+				//iterator tmp(_tree.searchRetNode(val.first));
+				return position;
+			}
+
+			template <class InputIterator>
+			void	insert(InputIterator first, InputIterator last)
+			{
+				while (first != last)
+				{
+					insert(*first);
+					++first;
+				}
+			}
 			
 			iterator	lower_bound(const key_type& k)
 			{
@@ -487,7 +531,7 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			//template <class Key, class T, class Compare, class Alloc>
 			class value_compare
 			{   // in C++98, it is required to inherit binary_function<value_type,value_type,bool>
-				protected:
+				public:
 					Compare comp;
 
 					typedef bool result_type;
@@ -501,13 +545,13 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 
 			value_compare	value_comp()const
 			{
-				return (value_compare(_comp));
+				return (value_compare());
 			}
 
 			map	&operator=(const map& egal)
 			{
 				_size = egal._size;
-				_tree.deleteEndNode();
+				_tree.deleteEndNode(_end);
 				Node *newN = NULL;
 
 				map::const_iterator start = egal.begin();
@@ -522,11 +566,12 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 					tmp_pair = _alloc.allocate(1);
 					_alloc.construct(tmp_pair, *start);
 					tmp_node = _nodeAlloc.allocate(1);
-					_nodeAlloc.construct(tmp_node, tmp_pair);
+					_nodeAlloc.construct(tmp_node, *tmp_pair);
 					++start;
-					_tree.insertNode(tmp_node->p);
+					insert(*start);
+					//_tree.insertNode(tmp_node->p);
 				}
-				_tree.setRoot() = newN;
+				_tree.setRoot(newN);
 				_tree.setEndNode(_end);
 				return *this;
 			}
