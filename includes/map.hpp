@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 15:54:03 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/03/07 19:35:26 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/08 20:48:28 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 #include "make_pair.hpp"
 #include "reverse_iterator.hpp"
 #include <iomanip>
+#include "equal.hpp"
+#include "lexicographical_compare.hpp"
 
 namespace ft
 {
@@ -30,27 +32,34 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 		template <class U, class V>
 		class map_iterator
 		{
-			typedef U		value_type;
-			typedef ptrdiff_t	difference_type;
-			typedef U*		pointer;
-			typedef U&		reference;
-			typedef ft::bidirectional_iterator_tag  iterator_category;
 
 			public:
+				typedef U		value_type;
+				typedef ptrdiff_t	difference_type;
+				typedef U*		pointer;
+				typedef U&		reference;
+				typedef ft::bidirectional_iterator_tag  iterator_category;
+
 				map_iterator(V *ptr = 0): _ptr(ptr)
 				{
 				}
 
-				map_iterator	&operator=(const V &egal)
+				map_iterator(map_iterator const &cpy)
 				{
-					//std::cout << "ICICICICICICIC: " << _ptr->m_right << "\n";
+					_ptr = cpy._ptr;
+				}
+
+				map_iterator	&operator=(map_iterator const &egal)
+				{
+				//	std::cout << "ICICICICICICIC: " << _ptr->m_right << "\n";
 					//std::cout << "OPERATOR=\n";
 					_ptr = egal._ptr;
 					return *this;
 				}
 				pointer	operator->() const
 				{
-					return &this->_ptr->p;
+				//	std::cout << "operator ->: " << _ptr->p->second << "\n";
+					return (_ptr->p);
 				}
 
 				map_iterator &operator++()
@@ -119,9 +128,9 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 					return tmp;
 				}
 
-				reference	operator*(void) const
+				reference	operator*() const
 				{
-					return _ptr->p;
+					return *(_ptr->p);
 				}
 
 				friend bool operator==(const map_iterator &lhs, const map_iterator &rhs)
@@ -132,26 +141,10 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				{
 					return (lhs._ptr != rhs._ptr);
 				}
-				friend bool operator<=(const map_iterator &lhs, const map_iterator &rhs)
-				{
-					return (lhs._ptr <= rhs._ptr);
-				}
-				friend bool operator>=(const map_iterator &lhs, const map_iterator &rhs)
-				{
-					return (lhs._ptr >= rhs._ptr);
-				}
-				friend bool operator<(const map_iterator &lhs, const map_iterator &rhs)
-				{
-					return (lhs._ptr < rhs._ptr);
-				}
-				friend bool operator>(const map_iterator &lhs, const map_iterator &rhs)
-				{
-					return (lhs._ptr > rhs._ptr);
-				}
 
-				operator map_iterator<const U, V>()  const
+				operator	map_iterator<const value_type, V>() const
 				{
-					return  map_iterator<const U, V>(_ptr);
+					return map_iterator<const value_type, V>(_ptr);
 				}
 
 			private:
@@ -184,6 +177,7 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				_alloc = alloc;
 				_comp = comp;
 				_end = _tree.newNode();
+				_size = 0;
 				//_end = _nodeAlloc.allocate(1);
 				//_nodeAlloc.construct(_end, value_type());
 				//_tree.setEndNode();
@@ -205,6 +199,7 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				_nodeAlloc = cpy._nodeAlloc;
 				_size = cpy._size;
 				_end = _tree.newNode();
+				_size = cpy._size;
 
 				value_type	*tmp_value;
 				Node		*tmp_node;
@@ -238,6 +233,38 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				//_nodeAlloc.destroy(_end);
 				//_nodeAlloc.deallocate(_end, 1);
 				//destroyTree(_tree.getRoot());
+			}
+
+			friend bool operator==(const map& lhs, const map& rhs)
+			{
+				if (lhs.size() == rhs.size())
+					return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+				return (false);
+			}
+			friend bool operator!=(const map& lhs, const map& rhs)
+			{
+				return (!(lhs == rhs));
+			}
+			friend bool operator<(const map& lhs, const map& rhs)
+			{
+				return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+			}
+			friend bool operator<=(const map& lhs, const map& rhs)
+			{
+				return (!(rhs < lhs));
+			}
+			friend bool operator>(const map& lhs, const map& rhs)
+			{
+				return (rhs < lhs);
+			}
+			friend bool operator>=(const map& lhs, const map& rhs)
+			{
+				return (!(lhs < rhs));
+			}
+
+			friend	void swap(map<Key, T, Compare,Alloc>& x, map<Key, T, Compare,Alloc>& y)
+			{
+				x.swap(y);	
 			}
 
 			        void    real_print(Node *ptr, int space, RBT<key_type, mapped_type, value_type, key_compare> test)
@@ -281,14 +308,23 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 
 			iterator	begin(void)
 			{
-				iterator tmp(_tree.minD(_tree.getRoot()));
-				return tmp;
+				if (_tree.minD(_tree.getRoot()))
+				{
+					
+					iterator tmp(_tree.minD(_tree.getRoot()));
+					return tmp;
+				}
+				return (this->end());
 			}
 
 			const_iterator	begin(void) const
 			{
-				const_iterator tmp(_tree.minD(_tree.getRoot()));
-				return tmp;
+				if (_tree.minD(_tree.getRoot()))
+				{
+					const_iterator tmp(_tree.minD(_tree.getRoot()));
+					return tmp;
+				}
+				return (this->end());
 			}
 
 			iterator end()
@@ -339,46 +375,49 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			void	erase(iterator position)
 			{
 				_tree.deleteEndNode(_end);
+				if (!_tree.search((*position).first))
+					return ;
 
 				Node	*tmp  = _tree.searchRetNode((*position).first);
-				if (tmp != 0)
-				{
-					_tree.deleteNode(_tree.getRoot(), tmp->p.first);
-					//_alloc.destroy(&tmp->p);
-					//_alloc.deallocate(&tmp->p, 1);
-					//_nodeAlloc.destroy(tmp);
-					//_nodeAlloc.deallocate(tmp, 1);
-					_size--;
-				}
+				_tree.deleteNode(_tree.getRoot(), tmp->p.first);
+				//_alloc.destroy(&tmp->p);
+				//_alloc.deallocate(&tmp->p, 1);
+				//_nodeAlloc.destroy(tmp);
+				//_nodeAlloc.deallocate(tmp, 1);
+				_size--;
 				_tree.setEndNode(_end);
 			}
 
 			size_type	erase(const key_type& k)
 			{
-				//std::cout << "PAS COMPRENDRE MOI ROOT->VALUE dans erase: " << _tree.getRoot()->p.first << "\n";
+				if (!_tree.search(k))
+					return (0);
 				_tree.deleteEndNode(_end);
-				return (_tree.deleteNode(_tree.getRoot(), _tree.searchRetVal(k)));
+				_tree.deleteNode(_tree.getRoot(), _tree.searchRetVal(k));
 				_tree.setEndNode(_end);
+				return (1);
 			}
 
 			void	erase(iterator first, iterator last)
 			{
 				while (first != last)
 				{
-					_tree.deleteNode(_tree.getRoot(), _tree.searchRetVal(first->first));
+					erase(first);
 					first++;
 				}
 			}
 
 			pair<iterator, bool>	insert(const value_type &val)
 			{
+				//std::cout << "debut insert val->first: " << val.first << "\n";
+				//std::cout << "debut insert val->second: " << val.second << "\n";
 				if (_tree.searchRetNode(val.first))
 				{
 					value_type	*tmp;
 					tmp = _alloc.allocate(1);
 					_alloc.construct(tmp, val);
 					Node *node = _nodeAlloc.allocate(1);
-					_nodeAlloc.construct(node, *tmp);
+					_nodeAlloc.construct(node, tmp);
 					iterator it(node);
 					return (make_pair<iterator, bool>(it, false));
 				}
@@ -399,13 +438,14 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				tmp = _alloc.allocate(1);
 				_alloc.construct(tmp, val);
 				Node *node = _nodeAlloc.allocate(1);
-				_nodeAlloc.construct(node, *tmp);
+				_nodeAlloc.construct(node, tmp);
 				_tree.setEndNode(_end);
 				iterator it(node);
-				_alloc.destroy(tmp);
-				_alloc.deallocate(tmp, 1);
-				_nodeAlloc.destroy(node);
-				_nodeAlloc.deallocate(node, 1);
+				//_alloc.destroy(tmp);
+				//_alloc.deallocate(tmp, 1);
+				//_nodeAlloc.destroy(node);
+				//_nodeAlloc.deallocate(node, 1);
+				_size++;
 				return (make_pair<iterator, bool>(it, true));
 				//return iterator(val);
 			}
@@ -556,9 +596,9 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 
 			size_type	size(void) const
 			{
-				size_type s = _tree.countElem(_tree.getRoot(), 1);
-				_tree.countElem(_tree.getRoot(), 0);
-				return (s);
+				//size_type s = _tree.countElem(_tree.getRoot(), 1);
+				//_tree.countElem(_tree.getRoot(), 0);
+				return (_tree.getSize());
 			}
 
 			Alloc	get_allocator(void) const
@@ -573,8 +613,11 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 
 			mapped_type& operator[] (const key_type& k)
 			{
-				ft::pair<iterator, bool> tmp = this->insert(ft::make_pair(k, mapped_type()));
-				return ((*(tmp.first)).second);
+				std::cout << "debut []: " << k;
+				return (*((insert(ft::make_pair (k, mapped_type()))).first)).second;
+				//ft::pair<iterator, bool> tmp = this->insert(ft::make_pair(k, mapped_type()));
+				//return (((tmp.first))->second);
+				//return ((*(tmp.first)).second);
 			}
 
 			//template <class Key, class T, class Compare, class Alloc>
@@ -615,7 +658,7 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 					tmp_pair = _alloc.allocate(1);
 					_alloc.construct(tmp_pair, *start);
 					tmp_node = _nodeAlloc.allocate(1);
-					_nodeAlloc.construct(tmp_node, *tmp_pair);
+					_nodeAlloc.construct(tmp_node, tmp_pair);
 					++start;
 					insert(*start);
 					//_tree.insertNode(tmp_node->p);
@@ -631,12 +674,15 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				Node_allocator	tmp_nodeAlloc = _nodeAlloc;
 				size_type	tmp_size = _size;
 				Node	*tmp_end = _end;
+				RBT<key_type, mapped_type, value_type, key_compare>	tmp_tree = _tree;
 
 				_alloc = x._alloc;
 				_nodeAlloc = x._nodeAlloc;
 				_size = x._size;
 				_end = x._end;
+				_tree = x._tree;
 				
+				x._tree = tmp_tree;
 				x._alloc = tmp_alloc;
 				x._nodeAlloc = tmp_nodeAlloc;
 				x._size = tmp_size;

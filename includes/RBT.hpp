@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 11:39:45 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/03/07 17:03:36 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/08 19:19:13 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ enum	RBT_color
 template <class T, class U, typename P, class Compare = std::less<T>, class Allocator = std::allocator<P> >
 class	RBT
 {
-	typedef ft::pair<const T, U>       value_type;
+	typedef P		value_type;
 	typedef	Compare       compare_type;
 	typedef	Allocator	allocator_type;
 	public:
@@ -46,25 +46,25 @@ class	RBT
 		Node		*m_left;
 		Node		*m_right;
 		V		key;
-		value_type	p;
+		value_type	*p;
 	
-		Node(const value_type &v = value_type()):m_color(s_red), m_parent(0), m_left(0), m_right(0), key(v.first), p(v)
+		Node(value_type *v = value_type()):m_color(s_red), m_parent(0), m_left(0), m_right(0), p(v)
 		{
 		}
 		
-		Node(Node const &cpy):p(cpy.p)
+		/*Node(Node const &cpy):p(cpy.p)
 		{
 			m_color = cpy.m_color;
 			m_parent = cpy.m_parent;
 			m_left = cpy.m_left;
 			m_right = cpy.m_right;
 			key = cpy.key;
-		}
+		}*/
 
-		value_type	getpair(void)
-		{
-			return p;
-		}
+	//	value_type	getpair(void)
+	//	{
+	//		return p;
+	//	}
 	};
 	typedef typename allocator_type::template rebind<Node<T> >::other	Node_allocator;
 	
@@ -74,19 +74,12 @@ class	RBT
 	Node<T>	*getNULL(void) const
 	{ return NULLnode; }
 
-	void	ft_test(void)
-	{
-	//	std::cout << "salut\n";
-		//std::cout << "TTTTTTTT: " << P->second;
-	}
-
 	void	leftRotate(Node<T> *node)
 	{
 		 Node<T> *tmp;
 
 		 tmp = node->m_right;
 		 node->m_right = tmp->m_left;
-		 //if(tmp && tmp->m_left != NULLnode && tmp->m_left)
 		 if(tmp && tmp->m_left != NULL)
 		 {
 			 tmp->m_left->m_parent = node;
@@ -111,7 +104,6 @@ class	RBT
 
 		tmp = node->m_left;
 		node->m_left = tmp->m_right;
-		//if (tmp && tmp->m_right != NULLnode && tmp->m_right)
 		if (tmp && tmp->m_right != NULL)
 		{
 			tmp->m_right->m_parent = node;
@@ -209,10 +201,14 @@ class	RBT
 		_root->m_color = s_black;
 	}
 
-	Node<T> *newNode(const value_type& v = value_type())
+	Node<T> *newNode(const value_type &v = value_type())
 	{
 		Node<T> *tmp = _alloc.allocate(1);
-		_alloc.construct(tmp, Node<T>(v));
+		value_type	*test;
+		 test = _destroyer.allocate(1);
+		 _destroyer.construct(test, v);
+		_alloc.construct(tmp, test);
+		//_alloc.construct(tmp, Node<T>(v));
 		//tmp->m_right = NULLnode;
 		//tmp->m_left = NULLnode;
 		return tmp;
@@ -244,7 +240,7 @@ class	RBT
 			y = x;
 	//		std::cout << "Y: " << y->p.first << "\n";
 	//		std::cout << "Y COLOR: " << y->m_color << "\n";
-			if (_comp(newN->p.first, x->p.first))
+			if (newN->p && _comp(newN->p->first, x->p->first))
 			{
 				x = x->m_left;
 			}
@@ -264,11 +260,11 @@ class	RBT
 			//_root->m_right = NULLnode;
 			//_root->m_left = NULLnode;
 		}
-		else if (newN->key < y->key)
+		else if (newN->p && _comp(newN->p->first, y->p->first))   //else if (newN->key < y->key)
 		{
 			y->m_left = newN;
 		}
-		else if (newN->key > y->key)
+		else if (newN->p && !_comp(newN->p->first, y->p->first))   //else if (newN->key > y->key)
 		{
 			y->m_right = newN;
 		}
@@ -430,7 +426,7 @@ class	RBT
 		{
 			if (delN && delN->key == key)
 				tmp = delN;
-			if (delN && delN->key <= key)
+			if (delN && _comp(delN->p.first, key)) //delN->key < key)
 				delN = delN->m_right;
 			else
 				delN = delN->m_left;
@@ -520,7 +516,7 @@ class	RBT
 			{
 				flag = 1;
 			}
-                        if (tmp && tmp->key < key)
+                        if (tmp && _comp(tmp->p.first, key))  //tmp->key < key)
                                 tmp = tmp->m_right;
                         else
                                 tmp = tmp->m_left;
@@ -536,9 +532,9 @@ class	RBT
 		Node<T> *tmp = _root;
 		while (tmp != NULLnode)
                 {
-                        if (tmp && tmp->key > key)
+                        if (tmp && !_comp(tmp->p.first, key)) //tmp->key > key)
 				tmp = tmp->m_left;
-                        if (tmp && tmp->key < key)
+			else if (tmp && _comp(tmp->p.first, key)) //tmp->key < key)
                                 tmp = tmp->m_right;
                         else
 			{
@@ -555,16 +551,12 @@ class	RBT
 	{
 		int	flag = 0;
 		Node<T> *tmp = _root;
-		while (tmp != NULL && tmp != NULLnode)
+		while (tmp != NULL && tmp->p && tmp != NULLnode)
                 {
-                        if (tmp && tmp->p.first > key)
-			{
-                                tmp = tmp->m_left;
-			}
-                        else if (tmp && tmp->p.first < key)
-			{
+                        if (tmp && !_comp(tmp->p->first, key)) //tmp->key > key)
+				tmp = tmp->m_left;
+			else if (tmp && _comp(tmp->p->first, key)) //tmp->key < key)
                                 tmp = tmp->m_right;
-			}
                         else
 			{
 				flag = 1;
@@ -578,14 +570,16 @@ class	RBT
 
 	Node<T>	*minD(Node<T> *node) const
 	{
-		if (node == NULL)
+		if (node == NULL || _size == 0)
+		{
 			return (0);
+		}
 		while (node && node->m_left != NULL && node != NULLnode)
 		{
 	//		std::cout << "MIIIIINNNNNNNNN\n";
 			node = node->m_left;
 		}
-	//	std::cout << "VALUEEEE DANS MIIIIN: " << node->p.first << "\n";
+		//std::cout << "VALUEEEE DANS MIIIIN: " << _root->p->first << "\n";
 		return (node);
 	}
 
@@ -784,7 +778,7 @@ class	RBT
 		return _last;
 	}
 	
-	size_t	getSize(void)
+	size_t	getSize(void) const
 	{
 		return _size;
 	}

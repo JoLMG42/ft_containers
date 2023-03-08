@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 16:38:12 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/03/07 19:38:28 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/08 19:23:10 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 		real_print(ptr->m_right, space, test);
 		std::cout
 			<< (ptr->m_color == ft::s_black ? "\033[90m" : "\033[31m") << std::setw(space)
-			<< ptr->p.first << "\033[0m" << std::endl;
+			<< ptr->p->first << "\033[0m" << std::endl;
 		// getwchar();
 		real_print(ptr->m_left, space, test);
 	}
@@ -154,23 +154,38 @@ int	main(void)
 	std::cout << "\n";
 	std::cout << "\n";
 
-	ft::map<int, int>::iterator po = ft.begin();
 	ft::map<int, int>::iterator pa = ft.begin();
+	ft::map<int, int>::iterator po = ft.begin();
 	ft::map<int, int>::iterator la = ft.end();
 
 	pa++;
 
 	ft.insert(pa, ft::make_pair(6, 6));
-	ft.insert(pa, ft::make_pair(7, 6));
-	ft.insert(pa, ft::make_pair(8, 6));
-	ft.insert(pa, ft::make_pair(9, 6));
-	ft.insert(pa, ft::make_pair(16, 6));
-	ft.insert(pa, ft::make_pair(26, 6));
-	ft.insert(pa, ft::make_pair(36, 6));
-	ft.insert(pa, ft::make_pair(46, 6));
+	ft.insert(pa, ft::make_pair(7, 7));
+	ft.insert(pa, ft::make_pair(8, 8));
+	ft.insert(pa, ft::make_pair(9, 9));
+	ft.insert(pa, ft::make_pair(16, 16));
+	ft.insert(pa, ft::make_pair(26, 26));
+	ft.insert(pa, ft::make_pair(36, 36));
+	ft.insert(pa, ft::make_pair(46, 46));
 	while (po != la)
 	{
 		std::cout << "TEST: " << po->first << "\n";
+		po++;
+	}
+
+	std::cout << "\n";
+	std::cout << "\n";
+	std::cout << "\n";
+	std::cout << "\n";
+	po = ft.begin();
+	la = ft.end();
+
+	ft[11] = 12;
+
+	while (po != la)
+	{
+		std::cout << "TEST: " << po->second << "\n";
 		po++;
 	}
 
