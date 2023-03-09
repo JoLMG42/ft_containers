@@ -17,7 +17,7 @@ CC="clang++"
 CFLAGS="-Wall -Wextra -Werror -std=c++98"
 # CFLAGS+=" -fsanitize=address -g3"
 
-ft_compile_output="/dev/null"
+ft_compile_output="/dev/stdin"
 std_compile_output="/dev/null"
 
 function pheader () {
@@ -41,7 +41,7 @@ compile () {
 	macro_name=$(echo "USING_${2}" | awk '{ print toupper($0) }')
 	compile_cmd="$CC $CFLAGS -o ${3} -I./$include_path -D ${macro_name} ${1}"
 	if [ -n "$4" ]; then
-		compile_cmd+=" &>${4}"
+		compile_cmd+=" /dev/stdin"
 	fi
 	eval "${compile_cmd}"
 	return $?
@@ -112,8 +112,8 @@ cmp_one () {
 
 	clean_trailing_files () {
 		rm -f $ft_bin $std_bin
-		[ -s "$diff_file" ] || rm -f $diff_file $ft_log $std_log &>/dev/null
-		rmdir $deepdir $logdir &>/dev/null
+		[ -s "$diff_file" ] || rm -f $diff_file $ft_log $std_log &>/dev/stdin
+		rmdir $deepdir $logdir &>/dev/stdin
 	}
 
 	# Launch async compilations for ft/std binaries
@@ -145,7 +145,7 @@ cmp_one () {
 	fi
 	same_bin=$(isEq $ft_ret $std_ret)
 
-	diff $std_log $ft_log 2>/dev/null 1>"$diff_file";
+	diff $std_log $ft_log 2>/dev/stdin  1>"$diff_file";
 	compare_output $diff_file
 	same_output=$?
 
@@ -172,6 +172,6 @@ function main () {
 
 	for container in ${containers[@]}; do
 		printf "%40s\n" $container
-		do_test $container 2>/dev/null
+		do_test $container 2>/dev/stdin
 	done
 }

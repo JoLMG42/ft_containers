@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 16:38:12 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/03/08 19:23:10 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/09 19:48:40 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,7 @@ int	main(void)
 	//real_print(ft._tree.getRoot(), 0, ft._tree);
 
 	std::map<int,int>::iterator itlow,itup;
-	itlow = real.lower_bound(-10);
+	itlow = real.lower_bound(10000);
 	std::cout << "real test lower first: " << itlow->first << "\n";
 	std::cout << "real test lower second: " << itlow->second << "\n";
 	itlow = real.upper_bound(-10);
@@ -142,7 +142,7 @@ int	main(void)
 	std::cout << "real test upper second: " << itlow->second << "\n";
 
 	ft::map<int,int>::iterator itlow2,itup2;
-	itlow2 = ft.lower_bound(-10);
+	itlow2 = ft.lower_bound(10000);
 	std::cout << "ft test lower first: " << itlow2->first << "\n";
 	std::cout << "ft test lower second: " << itlow2->second << "\n";
 	itlow2 = ft.upper_bound(-10);
@@ -168,9 +168,10 @@ int	main(void)
 	ft.insert(pa, ft::make_pair(26, 26));
 	ft.insert(pa, ft::make_pair(36, 36));
 	ft.insert(pa, ft::make_pair(46, 46));
+	ft.insert(pa, ft::make_pair(243, 243));
 	while (po != la)
 	{
-		std::cout << "TEST: " << po->first << "\n";
+		std::cout << "TEST: " << po->second << "\n";
 		po++;
 	}
 
@@ -181,12 +182,30 @@ int	main(void)
 	po = ft.begin();
 	la = ft.end();
 
-	ft[11] = 12;
+	ft[243] = 24;
+	real_print(ft._tree.getRoot(), 0, ft._tree);
+	ft._tree.deleteNode(ft._tree.getRoot(), 26);
 
 	while (po != la)
 	{
-		std::cout << "TEST: " << po->second << "\n";
+		std::cout << "first: " << po->first <<  " second: " << po->second << "\n";
 		po++;
 	}
+
+	real_print(ft._tree.getRoot(), 0, ft._tree);
+
+	ft::map<int, int> cpy;
+	cpy = ft;
+	ft::map<int, int>::iterator s1 = cpy.begin();
+	ft::map<int, int>::iterator f1 = cpy.end();
+
+
+	while (s1 != f1)
+	{
+		std::cout << "first: " << s1->first <<  " second: " << s1->second << "\n";
+		s1++;
+	}
+	real_print(cpy._tree.getRoot(), 0, cpy._tree);
+	std::cout << "Fin du main\n";
 
 }

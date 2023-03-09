@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 15:54:03 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/03/08 20:48:28 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/09 18:57:31 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				}
 				pointer	operator->() const
 				{
-				//	std::cout << "operator ->: " << _ptr->p->second << "\n";
+					//std::cout << "operator ->: " << _ptr->p->second << "\n";
 					return (_ptr->p);
 				}
 
@@ -197,7 +197,6 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				_comp = cpy._comp;
 				_alloc = cpy._alloc;
 				_nodeAlloc = cpy._nodeAlloc;
-				_size = cpy._size;
 				_end = _tree.newNode();
 				_size = cpy._size;
 
@@ -205,13 +204,13 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				Node		*tmp_node;
 				const_iterator first = cpy.begin();
 				const_iterator last = cpy.end();
-
+				_tree.deleteEndNode(_end);
 				while (first != last)
 				{
 					tmp_value = _alloc.allocate(1);
 					_alloc.construct(tmp_value, *first);
 					tmp_node = _nodeAlloc.allocate(1);
-					_nodeAlloc.construct(tmp_node, *tmp_value);
+					_nodeAlloc.construct(tmp_node, tmp_value);
 					insert(*first);
 					++first;
 				}
@@ -296,6 +295,7 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				_last->m_right = _tree.getNULL();
 				_last->m_parent = _tree.getRoot();
 				_tree.getRoot()->m_right = _tree.getLast();*/
+				_tree.deleteEndNode(_end);
 				while (first != last)
 				{
 				//	real_print(_tree.getRoot(), 0, _tree);
@@ -377,40 +377,40 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				_tree.deleteEndNode(_end);
 				if (!_tree.search((*position).first))
 					return ;
-
 				Node	*tmp  = _tree.searchRetNode((*position).first);
-				_tree.deleteNode(_tree.getRoot(), tmp->p.first);
-				//_alloc.destroy(&tmp->p);
-				//_alloc.deallocate(&tmp->p, 1);
-				//_nodeAlloc.destroy(tmp);
-				//_nodeAlloc.deallocate(tmp, 1);
+				_tree.deleteNode(tmp->p->first);
 				_size--;
 				_tree.setEndNode(_end);
 			}
 
 			size_type	erase(const key_type& k)
 			{
+				_tree.deleteEndNode(_end);
 				if (!_tree.search(k))
 					return (0);
-				_tree.deleteEndNode(_end);
+				std::cout << "LAALALALALALALALALALALLA\n";
 				_tree.deleteNode(_tree.getRoot(), _tree.searchRetVal(k));
+				_size--;
 				_tree.setEndNode(_end);
 				return (1);
 			}
 
 			void	erase(iterator first, iterator last)
 			{
+				_tree.deleteEndNode(_end);
 				while (first != last)
 				{
 					erase(first);
 					first++;
 				}
+				_tree.setEndNode(_end);
 			}
 
 			pair<iterator, bool>	insert(const value_type &val)
 			{
 				//std::cout << "debut insert val->first: " << val.first << "\n";
 				//std::cout << "debut insert val->second: " << val.second << "\n";
+				_tree.deleteEndNode(_end);
 				if (_tree.searchRetNode(val.first))
 				{
 					value_type	*tmp;
@@ -419,14 +419,14 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 					Node *node = _nodeAlloc.allocate(1);
 					_nodeAlloc.construct(node, tmp);
 					iterator it(node);
-					return (make_pair<iterator, bool>(it, false));
+					_tree.setEndNode(_end);
+					return (ft::make_pair<iterator, bool>(it, false));
 				}
 				//	return (make_pair(iterator(val), false));
 		//		std::cout << "AFFICHAGE AVANT DELETE END\n";
 				//real_print(_tree.getRoot(), 0, _tree);
 				//if (_tree.getSize() > 0)
 		//		real_print(_tree.getRoot(), 0, _tree);
-				_tree.deleteEndNode(_end);
 		//		std::cout << "AFFICHAGE APRES DELETE END\n";
 		//		real_print(_tree.getRoot(), 0, _tree);
 				_tree.insertNode(val);
@@ -446,7 +446,7 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				//_nodeAlloc.destroy(node);
 				//_nodeAlloc.deallocate(node, 1);
 				_size++;
-				return (make_pair<iterator, bool>(it, true));
+				return (ft::make_pair<iterator, bool>(it, true));
 				//return iterator(val);
 			}
 
@@ -575,10 +575,20 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				return (0);
 			}
 
+			void	destroyAll(Node *node)
+			{
+				if (node == NULL)
+					return ;
+				destroyAll(node->m_left);
+				destroyAll(node->m_right);
+				_nodeAlloc.destroy(node);
+				_nodeAlloc.deallocate(node, 1);
+			}
+
 			void	clear(void)
 			{
-				_tree.destroyAll();
-					
+				_tree.deleteEndNode(_end);
+				destroyAll(_tree.getRoot());
 			}
 
 			bool	empty() const
@@ -613,10 +623,13 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 
 			mapped_type& operator[] (const key_type& k)
 			{
-				std::cout << "debut []: " << k;
-				return (*((insert(ft::make_pair (k, mapped_type()))).first)).second;
-				//ft::pair<iterator, bool> tmp = this->insert(ft::make_pair(k, mapped_type()));
-				//return (((tmp.first))->second);
+				//std::cout << "debut []: " << k << "\n";
+				//return (((insert(ft::make_pair (k, mapped_type()))).first))->second;
+				this->insert(ft::make_pair(k, mapped_type()));
+				Node *tmp = _tree.searchRetNode(k);
+				//std::cout << std::boolalpha << "tmp: " << tmp.second << "\n";
+				//tmp.first->second = 5;
+				return (tmp->p->second);
 				//return ((*(tmp.first)).second);
 			}
 
@@ -640,30 +653,55 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				return (value_compare());
 			}
 
+			void	recursiveAssignement(Node *node, const_iterator &first, const_iterator &last)
+			{
+				//std::cout << "jsuis pas la ????\n";
+				if (node == NULL)
+				{
+					//std::cout << "return NULL\n";
+					return ;
+				}
+				recursiveAssignement(node->m_right, first, last);
+				recursiveAssignement(node->m_left, first, last);
+
+				while (first != last)
+				{
+					//std::cout << "first: " << first->first << "\n";
+					_tree.insertNode(*first);
+					first++;
+				}
+			}
+
 			map	&operator=(const map& egal)
 			{
 				_size = egal._size;
 				_tree.deleteEndNode(_end);
-				Node *newN = NULL;
-
+				
 				map::const_iterator start = egal.begin();
 				map::const_iterator fin = egal.end();
 
-				//this->recursive_assignment(_base_tree, &new_base, x_first, x_last);
+				recursiveAssignement(_tree.getRoot(), start, fin);
+
+				start = egal.begin();
+				fin = egal.end();
+
+				//start = this->begin();
+				//fin = this->end();
+
 
 				value_type	*tmp_pair;
 				Node		*tmp_node;
 				while (start != fin)
 				{
+					//std::cout << "start: " << start->first << "\n";
 					tmp_pair = _alloc.allocate(1);
 					_alloc.construct(tmp_pair, *start);
 					tmp_node = _nodeAlloc.allocate(1);
 					_nodeAlloc.construct(tmp_node, tmp_pair);
+					_tree.insertNode(*start);
 					++start;
-					insert(*start);
 					//_tree.insertNode(tmp_node->p);
 				}
-				_tree.setRoot(newN);
 				_tree.setEndNode(_end);
 				return *this;
 			}

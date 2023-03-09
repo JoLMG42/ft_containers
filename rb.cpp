@@ -44,7 +44,7 @@
 		real_print(ptr->m_right, space, test);
 		std::cout
 			<< (ptr->m_color == ft::s_black ? "\033[90m" : "\033[31m") << std::setw(space)
-			<< ptr->p.first << "\033[0m" << std::endl;
+			<< ptr->p->first << "\033[0m" << std::endl;
 		// getwchar();
 		real_print(ptr->m_left, space, test);
 	}
