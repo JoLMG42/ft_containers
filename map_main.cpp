@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 16:38:12 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/03/09 19:48:40 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/10 19:29:55 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,8 +183,8 @@ int	main(void)
 	la = ft.end();
 
 	ft[243] = 24;
-	real_print(ft._tree.getRoot(), 0, ft._tree);
-	ft._tree.deleteNode(ft._tree.getRoot(), 26);
+	//real_print(ft._tree.getRoot(), 0, ft._tree);
+	ft.erase(26);
 
 	while (po != la)
 	{
@@ -192,7 +192,7 @@ int	main(void)
 		po++;
 	}
 
-	real_print(ft._tree.getRoot(), 0, ft._tree);
+	//real_print(ft._tree.getRoot(), 0, ft._tree);
 
 	ft::map<int, int> cpy;
 	cpy = ft;
@@ -205,7 +205,9 @@ int	main(void)
 		std::cout << "first: " << s1->first <<  " second: " << s1->second << "\n";
 		s1++;
 	}
-	real_print(cpy._tree.getRoot(), 0, cpy._tree);
+	//real_print(cpy._tree.getRoot(), 0, cpy._tree);
 	std::cout << "Fin du main\n";
+	//ft.clear();
+	//real_print(ft._tree.getRoot(), 0, ft._tree);
 
 }

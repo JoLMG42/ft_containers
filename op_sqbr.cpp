@@ -10,6 +10,7 @@ int		main(void)
 	TESTED_NAMESPACE::map<T1, T2> mp;
 
 	mp['a'] = "an element";
+	printSize(mp);
 	mp['b'] = "another element";
 	mp['c'] = mp['b'];
 	mp['b'] = "old element";

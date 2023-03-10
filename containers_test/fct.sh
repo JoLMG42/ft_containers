@@ -17,7 +17,7 @@ CC="clang++"
 CFLAGS="-Wall -Wextra -Werror -std=c++98"
 # CFLAGS+=" -fsanitize=address -g3"
 
-ft_compile_output="/dev/stdin"
+ft_compile_output="/dev/null"
 std_compile_output="/dev/null"
 
 function pheader () {
@@ -41,7 +41,7 @@ compile () {
 	macro_name=$(echo "USING_${2}" | awk '{ print toupper($0) }')
 	compile_cmd="$CC $CFLAGS -o ${3} -I./$include_path -D ${macro_name} ${1}"
 	if [ -n "$4" ]; then
-		compile_cmd+=" /dev/stdin"
+		compile_cmd+=" &>${4}"
 	fi
 	eval "${compile_cmd}"
 	return $?
@@ -113,7 +113,7 @@ cmp_one () {
 	clean_trailing_files () {
 		rm -f $ft_bin $std_bin
 		[ -s "$diff_file" ] || rm -f $diff_file $ft_log $std_log &>/dev/stdin
-		rmdir $deepdir $logdir &>/dev/stdin
+		rmdir $deepdir $logdir &>/dev/null
 	}
 
 	# Launch async compilations for ft/std binaries

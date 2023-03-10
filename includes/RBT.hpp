@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 11:39:45 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/03/09 19:50:09 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/10 19:48:24 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,6 +208,8 @@ class	RBT
 		 test = _destroyer.allocate(1);
 		 _destroyer.construct(test, v);
 		_alloc.construct(tmp, test);
+		//_destroyer.destroy(test);
+		//_destroyer.deallocate(test, 1);
 		//_alloc.construct(tmp, Node<T>(v));
 		//tmp->m_right = NULLnode;
 		//tmp->m_left = NULLnode;
@@ -216,6 +218,7 @@ class	RBT
 
 	void	insertNode(const value_type &node)
 	{
+		//std::cout << "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: " << node.first << "\n";
 		Node<T>	*newN = newNode(node);
 		
 		if (_root)
@@ -227,10 +230,9 @@ class	RBT
 		newN->m_color = s_red;
 
 		Node<T> 	*x = _root;
-	//	std::cout << "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: " << _root << "\n";
 		Node<T>		*y = NULL;
 
-	//	std::cout << "debut insert: " << newN->p.first << "\n";
+//		std::cout << "debut insert: " << newN->p->first << "\n";
 	//	std::cout << "root debut insert: " << _root << "\n";
 		while (x != NULL)
 		{
@@ -257,8 +259,14 @@ class	RBT
 		{
 	//		std::cout << "ppppppp\n";
 			newN->m_color = s_black;
+			_destroyer.destroy(_root->p);
+			_destroyer.deallocate(_root->p, 1);
+			_alloc.destroy(_root);
+			_alloc.deallocate(_root, 1);
+			//_root = NULL;
 			_root = newN;
 			_root->m_color = s_black;
+			_root->m_parent = NULL;
 			//_root->m_right = NULLnode;
 			//_root->m_left = NULLnode;
 		}
@@ -269,6 +277,7 @@ class	RBT
 		else if (newN->p && _comp(y->p->first, newN->p->first))   //else if (newN->key > y->key)
 		{
 			y->m_right = newN;
+		//	std::cout << "A DROITE\n";
 		}
 		else
 		{
@@ -301,13 +310,13 @@ class	RBT
 			}
 		}*/
 		_size++;
+		//std::cout << "END INSERT NEW->first: " << newN->p->first << "\n";
 		if (newN->m_parent == NULL)
 			return;
 		if (newN->m_parent->m_parent == NULL)
 			return;
 	//	std::cout << "NEWN PARENT COLOR FIN INSERT: " << newN->m_parent->m_parent->p.first << "\n";
-	//	std::cout << "END INSERT NEW->first: " << newN->p.first << "\n";
-	//	std::cout << "END INSERT NEW->second: " << newN->p.second << "\n";
+		//std::cout << "END INSERT NEW->second: " << newN->p->second << "\n";
 		insertionFix(newN);
 	}
 
@@ -370,11 +379,14 @@ class	RBT
 					rightRotate(tmp);
 					tmp = x->m_parent->m_left;
 				}
+			//	else if (tmp)
+			//	{
 					tmp->m_color = x->m_parent->m_color;
 					x->m_parent->m_color = s_black;
 					tmp->m_left->m_color = s_black;
 					leftRotate(x->m_parent);
 					x = _root;
+			//	}
 			 }
 		 }
 		 x->m_color = s_black;
@@ -417,14 +429,84 @@ class	RBT
 			node = node->m_right;
 		return (node);
 	}
+
+	int	deleteNode(Node<T> *node, T key)
+			{
+				(void)node;
+				Node<T>	*y = NULLnode;
+				Node<T>	*x;
+				Node<T>	*n = NULLnode;
+
+				Node<T>	*tmp = _root;
+				while (tmp != NULL)
+				{
+					if (tmp && key == tmp->p->first)
+					{
+						n = tmp;
+						break ;
+					}
+					else if (tmp && _comp(key, tmp->p->first))
+					{
+						tmp = tmp->m_left;
+					}
+					else
+					{
+						tmp = tmp->m_right;
+					}
+				}
+				if (n->p->first == key)
+				{
+			//		std::cout << "n->key: " << n->p->first << "\n";
+					_size--;
+					y->p = n->p;
+					int og_color_y = y->m_color;
+					if (n->m_left == NULL)
+					{
+						x = n->m_right;
+						swap(n, n->m_right);
+					}
+					else if (n->m_right == NULL)
+					{
+						x = n->m_left;
+						swap(n, n->m_left);
+					}
+					else
+					{
+						y = minTree(n->m_right);
+						og_color_y = y->m_color;
+						//x = y->m_right;
+						x = y;
+						if (y->m_parent == n)
+							x->m_parent = y;
+						else
+						{
+							swap(y, y->m_right);
+							y->m_right = n->m_right;
+							y->m_right->m_parent = y;
+						}
+						swap(n, y);
+						y->m_left = n->m_left;
+						y->m_left->m_parent = y;
+						y->m_color = n->m_color;
+					}
+					//_alloc.destroy(n);
+					//_alloc.deallocate(n, 1);
+					if (og_color_y == s_black)
+					{
+						deletionFix(x);
+					}
+					return (1);
+				}
+				return (0);
+			}
 	
-	int	deleteNode(Node<T> *delN, T const &key)
+	/*int	deleteNode(Node<T> *delN, T const &key)
 	{
 	//	std::cout << "DEBUT DELETENODE ROOT VALUE: " << delN->p.first << "\n";
 		Node<T> *tmp = NULLnode;
 		Node<T> *x;
 		Node<T> *y = newNode();
-		std::cout << "KKKKKKKKKKKKKKKKKKKKKKKKKKKK: " << key << "\n";
+		//std::cout << "KKKKKKKKKKKKKKKKKKKKKKKKKKKK: " << key << "\n";
 		while (delN != NULLnode && delN != NULL)
 		{
 			tmp = delN;
@@ -437,7 +519,7 @@ class	RBT
 			//else if (delN && _comp(key, delN->p->first)) //delN->key < key)
 			//	delN = delN->m_right;
 		}
-		std::cout << "OOOOOOOOOOOOOOOOOo: " << tmp->p->first << "\n";
+		//std::cout << "OOOOOOOOOOOOOOOOOo: " << tmp->p->first << "\n";
 		//std::cout << "JJJJJJJJJJJJJJJJJj: " << delN->p->first << "\n";
 		if (tmp->p->first == key)
 		{
@@ -461,19 +543,20 @@ class	RBT
 			else
 			{
 			//	std::cout << "Gros while dans delete\n";
-				/*Node *test = tmp->m_right;
+				Node *test = tmp->m_right;
 				while (test->m_left != NULLnode)
 				{
 					std::cout << "test\n";
 					test = test->m_left;
 				}
-				y = test;*/
+				y = test;
 				y = minTree(tmp->m_right);
-				std::cout << "y apres minTree: " << y->p->first << "\n";
-				std::cout << "y apres minTree: " << y->m_right << "\n";
+			//	std::cout << "y apres minTree: " << y->p->first << "\n";
+			//	std::cout << "y apres minTree: " << y->m_right << "\n";
 				y_color = y->m_color;
 			//	std::cout << "Y COLOR DANS DELETE: " << y_color << "\n";
-				x = y->m_right;
+				//x = y->m_right;
+				x = y;
 			//	std::cout << "DEL/tmp debut gros while: " << tmp->key << "\n";
 				//std::cout << "x debut gros while: " << x->key << "\n";
 				//std::cout << "y debut gros while: " << y->key << "\n";
@@ -500,7 +583,7 @@ class	RBT
 			delete tmp;
 			//_alloc.destroy(y);
 			//_alloc.deallocate(y, 1);
-			std::cout << "xxxxxxx: " << x->p->first << "\n";
+			//std::cout << "xxxxxxx: " << x->p->first << "\n";
 			if (y_color == s_black)
 			{
 			//	std::cout << "go in fix deletion\n";
@@ -513,36 +596,37 @@ class	RBT
 			//std::cout << "NO find\n";
 			return 0;
 		}
-	}
+	}*/
 
 	int	search(const T &key) const
 	{
-		std::cout << "key search: " << key << "\n";
+		//std::cout << "key search: " << key << "\n";
 		Node<T> *tmp = _root;
 		while (tmp != NULLnode && tmp != NULL && tmp)
                 {
-			std::cout << "tmp key: " << tmp->p->first << "\n";
+		//	std::cout << "tmp key: " << tmp->p->first << "\n";
 			if (tmp->p->first == key)
 				return 1;
-                        if (tmp && _comp(tmp->p->first, key))  //tmp->key < key)
+                        //if (tmp && _comp(tmp->p->first, key))  //tmp->key < key)
+			if (tmp->p->first > key)
                                 tmp = tmp->m_left;
                         else
                                 tmp = tmp->m_right;
                 }
-		std::cout << "la\n";
+		//std::cout << "la\n";
 		return (0);
 	}
 
 	T	searchRetVal(const T &key) const
 	{
-		int	flag = 0;
 		Node<T> *tmp = _root;
-		std::cout << "key: " << key << "\n";
+		//std::cout << "key: " << key << "\n";
 		while (tmp && tmp != NULLnode)
                 {
 			if (tmp->p->first == key)
 				return tmp->p->first;
-                        if (tmp && _comp(tmp->p->first, key)) //tmp->key > key)
+                        //if (tmp && _comp(tmp->p->first, key)) //tmp->key > key)
+			if (tmp->p->first > key)
 				tmp = tmp->m_left;
 			else
                                 tmp = tmp->m_right;
@@ -556,16 +640,16 @@ class	RBT
 		Node<T> *tmp = _root;
 		while (tmp != NULL && tmp->p && tmp != NULLnode)
                 {
-			//std::cout << "key: " << key << " tmp: " << tmp->p->first << "\n";;
-                        if (tmp && _comp(tmp->p->first, key)) //tmp->key > key)
-                                tmp = tmp->m_right;
-			else if (tmp && _comp(key, tmp->p->first)) //tmp->key < key)
-				tmp = tmp->m_left;
-			else
+			if (tmp && tmp->p->first == key)
 			{
-				flag = 1;
-				break ;
+				return tmp;
 			}
+			if (tmp && _comp(tmp->p->first, key))
+                                tmp = tmp->m_right;
+			else if (tmp && _comp(key, tmp->p->first ))
+				tmp = tmp->m_left;
+                        //if (tmp && _comp(tmp->p->first, key)) //tmp->key > key)
+			//else if (tmp && _comp(key, tmp->p->first)) //tmp->key < key)
                         /*if (tmp && _comp(tmp->p->first, key)) //tmp->key > key)
                                 tmp = tmp->m_right;
 			else if (tmp && _comp(key, tmp->p->first)) //tmp->key < key)
@@ -585,7 +669,7 @@ class	RBT
 		}
 		while (node && node->m_left != NULL && node != NULLnode)
 		{
-	//		std::cout << "MIIIIINNNNNNNNN\n";
+			//std::cout << "MIIIIINNNNNNNNN\n";
 			node = node->m_left;
 		}
 		//std::cout << "VALUEEEE DANS MIIIIN: " << _root->p->first << "\n";
@@ -769,8 +853,14 @@ class	RBT
 
 	~RBT(void)
 	{
-		//_alloc.destroy(NULLnode);
-		//_alloc.deallocate(NULLnode, 1);
+	//	_destroyer.destroy(NULLnode->p);
+	//	_destroyer.deallocate(NULLnode->p, 1);
+	//	_alloc.destroy(NULLnode);
+	//	_alloc.deallocate(NULLnode, 1);
+		/*_destroyer.destroy(_root->p);
+		_destroyer.deallocate(_root->p, 1);
+		_alloc.destroy(_root);
+		_alloc.deallocate(_root, 1);*/
 		//std::cout << "DESTRUCTOR\n";
 
 	}
@@ -789,10 +879,10 @@ class	RBT
 	{
 		_root = root;
 	}
-	private:
 		Node<T> *_root;
-		Node<T> *_last;
 		Node<T> *NULLnode;
+	private:
+		Node<T> *_last;
 		compare_type	_comp;
 		Node_allocator	_alloc;
 		allocator_type	_destroyer;

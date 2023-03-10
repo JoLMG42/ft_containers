@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 15:54:03 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/03/09 18:57:31 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/10 19:47:37 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,19 +164,106 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			typedef	typename allocator_type::pointer			pointer;
 			typedef	typename allocator_type::const_pointer		const_pointer;
 			//typedef RBT<key_type, mapped_type, value_type, key_compare, allocator_type> Node;
-			typedef	typename RBT<key_type, mapped_type, value_type>::template Node<key_type> Node;
+			typedef	typename ft::RBT<key_type, mapped_type, value_type, key_compare, allocator_type>::template Node<key_type> Node;
 			typedef map_iterator<value_type, Node>					iterator;
 			typedef map_iterator<const value_type, Node>				const_iterator;
 			typedef	ft::reverse_iterator<iterator>					reverse_iterator;
 			typedef	ft::reverse_iterator<const_iterator>				const_reverse_iterator;
 			typedef typename allocator_type::template rebind<Node>::other		Node_allocator;
 
-  
-			explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
+          Node *makeNode(const value_type &v = value_type())
+        {
+                Node *tmp = _nodeAlloc.allocate(1);
+                value_type      *test;
+                 test = _alloc.allocate(1);
+                 _alloc.construct(test, v);
+                _nodeAlloc.construct(tmp, test);
+                //_alloc.construct(tmp, Node<T>(v));
+                //tmp->m_right = NULLnode;
+                //tmp->m_left = NULLnode;
+                return tmp;
+        }
+
+	        Node *RetEnd(Node *node, Node *end)
+        {
+                if (node == 0)
+                        return (0);
+                while (node != _tree.getNULL() && node && node->m_right && node->m_right != _tree.getNULL() && node->m_right != end)
+                        node = node->m_right;
+                return (node);
+        }
+
+
+	        void    setEnd(Node *end)
+        {
+                //Node<T> *tmp_min = RBT_min(_root);
+                Node *tmp_max = RetEnd(_tree._root, end);
+
+                //std::cout << "DANS SET END: " << tmp_max->p.first << "\n";
+                /*if (tmp_min != 0)
+                {
+                        tmp_min->_left = nodemin;
+                        nodemin->_father = temp_min;
+                }*/
+                if (tmp_max != 0)
+                {
+                        tmp_max->m_right = end;
+                        end->m_parent = tmp_max;
+                        end->m_right = _tree.getNULL();
+                }
+
+
+                /*Node<T>       *tmp = _root;
+
+                while (tmp->m_right && tmp->m_right != NULLnode)
+                        tmp = tmp->m_right;
+                std::cout << "NEW SET END::::::: " << tmp->p.first << "\n";
+                _last = NULLnode;
+                tmp->m_right = _last;
+                _last->m_parent = tmp;*/
+                //std::cout << "ALLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL: " << _last->m_parent->p.first << "\n";
+        }
+
+	        void    deleteEnd(Node *end)
+        {
+
+                //Node<T>       *tmp_min = RBT_min(_root);
+                Node *tmp_max = RetEnd(_tree._root, end);
+
+                //std::cout << "DANS DELETE END VALUE: " << tmp_max->p.first << "\n";
+                //if (temp_min != 0)
+                //      temp_min->_left = 0;
+                if (tmp_max != 0)
+                        tmp_max->m_right = 0;
+
+
+                /*Node<T>       *tmp = _root;
+                if (_size == 1)
+                {
+                        _root->m_right = NULL;
+                        return ;
+                }
+
+                while (tmp->m_right && tmp->m_right != NULLnode)
+                {
+                        std::cout << "DANS WHILE DELETE END NODE tmp->m_right: " << tmp->p.first << "\n";
+                        tmp = tmp->m_right;
+                }
+                std::cout << "APRES WHILE DELETE END NODE tmp->m_right: " << tmp->m_parent->p.first << "\n";
+                std::cout << "APRES WHILE DELETE END NODE tmp->m_right: " << tmp->p.first << "\n";
+                tmp->m_parent->m_right->m_right = NULL;*/
+        }
+
+
+
+
+			explicit map (const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()): _nodeAlloc(Node_allocator())
 			{
 				_alloc = alloc;
 				_comp = comp;
-				_end = _tree.newNode();
+				_end = makeNode();
+				//_end = _nodeAlloc.allocate(1);
+				//_end = _nodeAlloc.construct(_end, (value_type *) 0);
 				_size = 0;
 				//_end = _nodeAlloc.allocate(1);
 				//_nodeAlloc.construct(_end, value_type());
@@ -197,7 +284,7 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				_comp = cpy._comp;
 				_alloc = cpy._alloc;
 				_nodeAlloc = cpy._nodeAlloc;
-				_end = _tree.newNode();
+				_end = makeNode();
 				_size = cpy._size;
 
 				value_type	*tmp_value;
@@ -220,18 +307,27 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			void    destroyTree(Node *node)
 			{
 				if (!node || node == _tree.getNULL())
+				{
+					node = NULL;
 					return ;
+				}
 				destroyTree(node->m_left);
 				destroyTree(node->m_right);
+				_alloc.destroy(node->p);
+				_alloc.deallocate(node->p, 1);
 				_nodeAlloc.destroy(node);
 				_nodeAlloc.deallocate(node, 1);
+				node = NULL;
 			}
 
 			~map(void)
 			{
-				//_nodeAlloc.destroy(_end);
-				//_nodeAlloc.deallocate(_end, 1);
-				//destroyTree(_tree.getRoot());
+				_alloc.destroy(_end->p);
+				_alloc.deallocate(_end->p, 1);
+				_nodeAlloc.destroy(_end);
+				_nodeAlloc.deallocate(_end, 1);
+				deleteEnd(_end);
+				destroyTree(_tree.getRoot());
 			}
 
 			friend bool operator==(const map& lhs, const map& rhs)
@@ -276,7 +372,7 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
                 real_print(ptr->m_right, space, test);
                 std::cout
                         << (ptr->m_color == ft::s_black ? "\033[90m" : "\033[31m") << std::setw(space)
-                        << ptr->p.first << "\033[0m" << std::endl;
+                        << ptr->p->first << "\033[0m" << std::endl;
                 // getwchar();
                 real_print(ptr->m_left, space, test);
         }
@@ -286,7 +382,7 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			{
 				_comp = comp;
 				_alloc = alloc;
-				_end = _tree.newNode();
+				_end = makeNode();
 				//_end = _tree.newNode();
 				//_end = _nodeAlloc.allocate(1);
 				//_nodeAlloc.construct(_end, value_type());
@@ -310,7 +406,6 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			{
 				if (_tree.minD(_tree.getRoot()))
 				{
-					
 					iterator tmp(_tree.minD(_tree.getRoot()));
 					return tmp;
 				}
@@ -378,47 +473,60 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				if (!_tree.search((*position).first))
 					return ;
 				Node	*tmp  = _tree.searchRetNode((*position).first);
-				_tree.deleteNode(tmp->p->first);
+				_tree.deleteNode(_tree.getRoot(), tmp->p->first);
+		//		_nodeAlloc.destroy(tmp);
+		//		_nodeAlloc.deallocate(tmp, 1);
 				_size--;
 				_tree.setEndNode(_end);
 			}
 
 			size_type	erase(const key_type& k)
 			{
-				_tree.deleteEndNode(_end);
+				deleteEnd(_end);
 				if (!_tree.search(k))
 					return (0);
-				std::cout << "LAALALALALALALALALALALLA\n";
+//				std::cout << "LAALALALALALALALALALALLA\n";
+				//Node	*tmp = _tree.searchRetNode(k);
+				Node	*tmp  = _tree.searchRetNode(k);
 				_tree.deleteNode(_tree.getRoot(), _tree.searchRetVal(k));
+			//	_alloc.destroy(tmp->p);
+			//	_alloc.deallocate(tmp->p, 1);
+		//		_nodeAlloc.destroy(tmp);
+		//		_nodeAlloc.deallocate(tmp, 1);
 				_size--;
-				_tree.setEndNode(_end);
+				setEnd(_end);
 				return (1);
 			}
 
 			void	erase(iterator first, iterator last)
 			{
-				_tree.deleteEndNode(_end);
+				deleteEnd(_end);
 				while (first != last)
 				{
 					erase(first);
 					first++;
 				}
-				_tree.setEndNode(_end);
+				setEnd(_end);
 			}
 
 			pair<iterator, bool>	insert(const value_type &val)
 			{
-				//std::cout << "debut insert val->first: " << val.first << "\n";
+//				std::cout << "debut insert val->first: " << val.first << "\n";
 				//std::cout << "debut insert val->second: " << val.second << "\n";
-				_tree.deleteEndNode(_end);
+				deleteEnd(_end);
 				if (_tree.searchRetNode(val.first))
 				{
+//					std::cout << "lalalallal\n";
 					value_type	*tmp;
 					tmp = _alloc.allocate(1);
 					_alloc.construct(tmp, val);
 					Node *node = _nodeAlloc.allocate(1);
 					_nodeAlloc.construct(node, tmp);
 					iterator it(node);
+					_alloc.destroy(tmp);
+					_alloc.deallocate(tmp, 1);
+					_nodeAlloc.destroy(node);
+					_nodeAlloc.deallocate(node, 1);
 					_tree.setEndNode(_end);
 					return (ft::make_pair<iterator, bool>(it, false));
 				}
@@ -439,12 +547,12 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				_alloc.construct(tmp, val);
 				Node *node = _nodeAlloc.allocate(1);
 				_nodeAlloc.construct(node, tmp);
-				_tree.setEndNode(_end);
+				setEnd(_end);
 				iterator it(node);
-				//_alloc.destroy(tmp);
-				//_alloc.deallocate(tmp, 1);
-				//_nodeAlloc.destroy(node);
-				//_nodeAlloc.deallocate(node, 1);
+				_alloc.destroy(tmp);
+				_alloc.deallocate(tmp, 1);
+				_nodeAlloc.destroy(node);
+				_nodeAlloc.deallocate(node, 1);
 				_size++;
 				return (ft::make_pair<iterator, bool>(it, true));
 				//return iterator(val);
@@ -454,7 +562,9 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			{
 				(void)position;
 				insert(val);
+				deleteEnd(_end);
 				Node *tmp = _tree.searchRetNode(val.first);
+				setEnd(_end);
 				return (iterator(tmp));
 			}
 
@@ -577,7 +687,7 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 
 			void	destroyAll(Node *node)
 			{
-				if (node == NULL)
+				if (node == NULL || node == _tree.getNULL())
 					return ;
 				destroyAll(node->m_left);
 				destroyAll(node->m_right);
@@ -588,7 +698,9 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 			void	clear(void)
 			{
 				_tree.deleteEndNode(_end);
-				destroyAll(_tree.getRoot());
+				//while (_tree._root != NULL || _tree._root != _tree.getNULL())
+				//	_tree.deleteNode(_tree._root, _tree._root->p->first);
+				//destroyTree(_tree.getRoot());
 			}
 
 			bool	empty() const
@@ -626,10 +738,11 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				//std::cout << "debut []: " << k << "\n";
 				//return (((insert(ft::make_pair (k, mapped_type()))).first))->second;
 				this->insert(ft::make_pair(k, mapped_type()));
-				Node *tmp = _tree.searchRetNode(k);
+				//Node *tmp = _tree.searchRetNode(k);
 				//std::cout << std::boolalpha << "tmp: " << tmp.second << "\n";
 				//tmp.first->second = 5;
-				return (tmp->p->second);
+				return (_tree.searchRetNode(k)->p->second);
+				///return (tmp->p->second);
 				//return ((*(tmp.first)).second);
 			}
 
@@ -694,10 +807,10 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				while (start != fin)
 				{
 					//std::cout << "start: " << start->first << "\n";
-					tmp_pair = _alloc.allocate(1);
-					_alloc.construct(tmp_pair, *start);
-					tmp_node = _nodeAlloc.allocate(1);
-					_nodeAlloc.construct(tmp_node, tmp_pair);
+				//	tmp_pair = _alloc.allocate(1);
+				//	_alloc.construct(tmp_pair, *start);
+				//	tmp_node = _nodeAlloc.allocate(1);
+				//	_nodeAlloc.construct(tmp_node, tmp_pair);
 					_tree.insertNode(*start);
 					++start;
 					//_tree.insertNode(tmp_node->p);
@@ -713,18 +826,21 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				size_type	tmp_size = _size;
 				Node	*tmp_end = _end;
 				RBT<key_type, mapped_type, value_type, key_compare>	tmp_tree = _tree;
+				Node *tmp_NULLnode = _tree.NULLnode;
 
 				_alloc = x._alloc;
 				_nodeAlloc = x._nodeAlloc;
 				_size = x._size;
 				_end = x._end;
 				_tree = x._tree;
+				_tree.NULLnode = x._tree.NULLnode;
 				
 				x._tree = tmp_tree;
 				x._alloc = tmp_alloc;
 				x._nodeAlloc = tmp_nodeAlloc;
 				x._size = tmp_size;
 				x._end = tmp_end;
+				x._tree.NULLnode = tmp_NULLnode;
 			}
 
 		//	template <class key_type, value_compare>
@@ -734,13 +850,14 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 		//	}
 		//private:
 			//RBT<key_type, value_compare>	_tree;
-			RBT<key_type, mapped_type, value_type, key_compare>	_tree;
+			RBT<key_type, mapped_type, value_type, key_compare, allocator_type>	_tree;
 			//RBT _tree;
 			//RBT<key_type, value_compare> _tree;
 			Node_allocator	_nodeAlloc;
 			Alloc	_alloc;
 			Compare _comp;
 			Node *_end;
+			Node *_null;
 			size_t	_size;
 	};
 }
