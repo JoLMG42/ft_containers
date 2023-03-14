@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/23 16:38:12 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/03/10 19:29:55 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/13 17:27:45 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,7 +184,7 @@ int	main(void)
 
 	ft[243] = 24;
 	//real_print(ft._tree.getRoot(), 0, ft._tree);
-	ft.erase(26);
+	ft.erase(7);
 
 	while (po != la)
 	{

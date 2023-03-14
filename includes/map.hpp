@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 15:54:03 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/03/10 19:47:37 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/14 22:04:19 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,9 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 					if (_ptr->m_right != 0)
 					{
 						_ptr = _ptr->m_right;
-						while (_ptr->m_left != 0)
-							_ptr = _ptr->m_left;
+
 					}
-					else if (_ptr->m_parent->m_left ==_ptr)
+					else if (_ptr->m_parent && _ptr->m_parent->m_left ==_ptr)
 						_ptr = _ptr->m_parent;
 					else
 					{
@@ -287,21 +286,21 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				_end = makeNode();
 				_size = cpy._size;
 
-				value_type	*tmp_value;
-				Node		*tmp_node;
+			//	value_type	*tmp_value;
+			//	Node		*tmp_node;
 				const_iterator first = cpy.begin();
 				const_iterator last = cpy.end();
-				_tree.deleteEndNode(_end);
+				deleteEnd(_end);
 				while (first != last)
 				{
-					tmp_value = _alloc.allocate(1);
-					_alloc.construct(tmp_value, *first);
-					tmp_node = _nodeAlloc.allocate(1);
-					_nodeAlloc.construct(tmp_node, tmp_value);
+			//		tmp_value = _alloc.allocate(1);
+			//		_alloc.construct(tmp_value, *first);
+			//		tmp_node = _nodeAlloc.allocate(1);
+			//		_nodeAlloc.construct(tmp_node, tmp_value);
 					insert(*first);
 					++first;
 				}
-				_tree.setEndNode(_end);
+				setEnd(_end);
 			}
 
 			void    destroyTree(Node *node)
@@ -469,30 +468,41 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 
 			void	erase(iterator position)
 			{
-				_tree.deleteEndNode(_end);
+				deleteEnd(_end);
+				//std::cout << "last: " << (*position).first << "\n";
 				if (!_tree.search((*position).first))
+				{
+					setEnd(_end);
 					return ;
+				}
 				Node	*tmp  = _tree.searchRetNode((*position).first);
-				_tree.deleteNode(_tree.getRoot(), tmp->p->first);
-		//		_nodeAlloc.destroy(tmp);
-		//		_nodeAlloc.deallocate(tmp, 1);
+				real_print(_tree.getRoot(), 0, _tree);
+				_tree.deleteNode(_tree.getRoot(), _tree.searchRetVal((*position).first));
+			//	_alloc.destroy(tmp->p);
+			//	_alloc.deallocate(tmp->p, 1);
+			//	_nodeAlloc.destroy(tmp);
+			//	_nodeAlloc.deallocate(tmp, 1);
 				_size--;
-				_tree.setEndNode(_end);
+				setEnd(_end);
+				real_print(_tree.getRoot(), 0, _tree);
 			}
 
 			size_type	erase(const key_type& k)
 			{
 				deleteEnd(_end);
 				if (!_tree.search(k))
+				{
+					setEnd(_end);
 					return (0);
-//				std::cout << "LAALALALALALALALALALALLA\n";
+				}
+				//std::cout << "LAALALALALALALALALALALLA\n";
 				//Node	*tmp = _tree.searchRetNode(k);
 				Node	*tmp  = _tree.searchRetNode(k);
-				_tree.deleteNode(_tree.getRoot(), _tree.searchRetVal(k));
+				_tree.deleteNode(_tree.getRoot(), k);
 			//	_alloc.destroy(tmp->p);
 			//	_alloc.deallocate(tmp->p, 1);
-		//		_nodeAlloc.destroy(tmp);
-		//		_nodeAlloc.deallocate(tmp, 1);
+				_nodeAlloc.destroy(tmp);
+				_nodeAlloc.deallocate(tmp, 1);
 				_size--;
 				setEnd(_end);
 				return (1);
@@ -500,34 +510,37 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 
 			void	erase(iterator first, iterator last)
 			{
-				deleteEnd(_end);
+				if (last == this->end())
+				{
+					last--;
+				}
 				while (first != last)
 				{
 					erase(first);
 					first++;
 				}
-				setEnd(_end);
 			}
 
 			pair<iterator, bool>	insert(const value_type &val)
 			{
-//				std::cout << "debut insert val->first: " << val.first << "\n";
 				//std::cout << "debut insert val->second: " << val.second << "\n";
 				deleteEnd(_end);
-				if (_tree.searchRetNode(val.first))
+				if (_tree.searchRetNode(val.first) && _tree.getSize() > 0)
 				{
 //					std::cout << "lalalallal\n";
-					value_type	*tmp;
-					tmp = _alloc.allocate(1);
-					_alloc.construct(tmp, val);
-					Node *node = _nodeAlloc.allocate(1);
-					_nodeAlloc.construct(node, tmp);
-					iterator it(node);
-					_alloc.destroy(tmp);
-					_alloc.deallocate(tmp, 1);
-					_nodeAlloc.destroy(node);
-					_nodeAlloc.deallocate(node, 1);
-					_tree.setEndNode(_end);
+				//	value_type	*tmp;
+				//	tmp = _alloc.allocate(1);
+				//	_alloc.construct(tmp, val);
+				//	Node *node = _nodeAlloc.allocate(1);
+				//	_nodeAlloc.construct(node, tmp);
+				//	iterator it(node);
+				//	_alloc.destroy(tmp);
+				//	_alloc.deallocate(tmp, 1);
+				//	_nodeAlloc.destroy(node);
+				//	_nodeAlloc.deallocate(node, 1);
+					Node *tmp = _tree.searchRetNode(val.first);
+					setEnd(_end);
+					iterator it(tmp);
 					return (ft::make_pair<iterator, bool>(it, false));
 				}
 				//	return (make_pair(iterator(val), false));
@@ -537,22 +550,24 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 		//		real_print(_tree.getRoot(), 0, _tree);
 		//		std::cout << "AFFICHAGE APRES DELETE END\n";
 		//		real_print(_tree.getRoot(), 0, _tree);
+				//std::cout << "debut insert val->first: " << val.first << "\n";
 				_tree.insertNode(val);
 		//		std::cout << "AFFICHAGE APRES INSERT END\n";
 				//real_print(_tree.getRoot(), 0, _tree);
 				//std::cout << "insert val: " << val.first << "\n";
 				//iterator tmp(_tree.searchRetNode(val.first));
-				value_type	*tmp;
-				tmp = _alloc.allocate(1);
-				_alloc.construct(tmp, val);
-				Node *node = _nodeAlloc.allocate(1);
-				_nodeAlloc.construct(node, tmp);
+				//value_type	*tmp;
+				//tmp = _alloc.allocate(1);
+				//_alloc.construct(tmp, val);
+				//Node *node = _nodeAlloc.allocate(1);
+				//_nodeAlloc.construct(node, tmp);
+				Node *tmp = _tree.searchRetNode(val.first);
 				setEnd(_end);
-				iterator it(node);
-				_alloc.destroy(tmp);
-				_alloc.deallocate(tmp, 1);
-				_nodeAlloc.destroy(node);
-				_nodeAlloc.deallocate(node, 1);
+				iterator it(tmp);
+				//_alloc.destroy(tmp);
+				//_alloc.deallocate(tmp, 1);
+				//_nodeAlloc.destroy(node);
+				//_nodeAlloc.deallocate(node, 1);
 				_size++;
 				return (ft::make_pair<iterator, bool>(it, true));
 				//return iterator(val);
@@ -802,8 +817,8 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 				//fin = this->end();
 
 
-				value_type	*tmp_pair;
-				Node		*tmp_node;
+				//value_type	*tmp_pair;
+				//Node		*tmp_node;
 				while (start != fin)
 				{
 					//std::cout << "start: " << start->first << "\n";
