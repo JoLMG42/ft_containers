@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/31 15:54:03 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/03/14 22:04:19 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/14 22:53:13 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 	class map
 	{
 		template <class U, class V>
-		class map_iterator
+		class map_iterator: public map
 		{
 
 			public:
@@ -68,10 +68,10 @@ template< class Key, class T, class Compare = std::less<Key>, class Alloc = std:
 						return *this;
 					if (_ptr == NULL)
 					{
-						if (_ptr->m_parent == 0 || _ptr->m_parent->m_left == _ptr)
+						if (_ptr->m_parent == NULL || _ptr->m_parent->m_left == _ptr)
 							return *this;
 					}
-					if (_ptr->m_right != 0)
+					if (_ptr->m_right != NULL && _ptr->m_right != _tree.NULLnode)
 					{
 						_ptr = _ptr->m_right;
 

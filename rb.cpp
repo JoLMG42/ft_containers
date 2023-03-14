@@ -107,11 +107,14 @@ int	main(void)
 	M._tree.insertNode(ft::make_pair(3, 10));
 	real_print(M._tree.getRoot(), 0, M._tree);*/
 	M._tree.insertNode(ft::make_pair(50, 50));
-	//real_print(M._tree.getRoot(), 0, M._tree);
+	M._tree.insertNode(ft::make_pair(20, 20));
+	//M._tree.insertNode(ft::make_pair(30, 30));
+	//M._tree.insertNode(ft::make_pair(1, 1));
+	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";
 	std::cout << "\n";
 	std::cout << "\n";
-	M.erase(M.begin());
+	//M.erase(M.begin());
 	/*M._tree.insertNode(ft::make_pair(8, 8));
 	real_print(M._tree.getRoot(), 0, M._tree);
 	std::cout << "\n";

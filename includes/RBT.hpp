@@ -6,7 +6,7 @@
 /*   By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 11:39:45 by jtaravel          #+#    #+#             */
-/*   Updated: 2023/03/14 22:01:35 by jtaravel         ###   ########.fr       */
+/*   Updated: 2023/03/14 22:52:15 by jtaravel         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,15 +217,15 @@ class	RBT
 
 	void	insertNode(const value_type &node)
 	{
-		//std::cout << "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: " << node.first << "\n";
+		std::cout << "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: " << node.first << "\n";
 		Node<T>	*newN = newNode(node);
 		
 		if (_root)
 			_root->m_parent = NULL;
 		/*newN->key = k;*/
 		newN->m_parent = NULL;
-		newN->m_left = NULL;
-		newN->m_right = NULL;
+		newN->m_left = NULLnode;
+		newN->m_right = NULLnode;
 		newN->m_color = s_red;
 
 		Node<T> 	*x = _root;
@@ -233,7 +233,7 @@ class	RBT
 
 //		std::cout << "debut insert: " << newN->p->first << "\n";
 	//	std::cout << "root debut insert: " << _root << "\n";
-		while (x != NULL && x != NULLnode)
+		while (x && x != NULLnode)
 		{
 	//		std::cout << "NEW: " << newN->p.second << "\n";
 	//		std::cout << "X: " << x->p.first << "\n";
@@ -256,7 +256,7 @@ class	RBT
 		newN->m_parent = y;
 		if (_size == 0 || y == NULL)
 		{
-			//std::cout << "ppppppp\n";
+			std::cout << "ppppppp\n";
 			newN->m_color = s_black;
 			_destroyer.destroy(_root->p);
 			_destroyer.deallocate(_root->p, 1);
@@ -271,20 +271,22 @@ class	RBT
 		}
 		else if (newN->p && _comp(newN->p->first, y->p->first))   //else if (newN->key < y->key)
 		{
+			std::cout << "A GAUCHE\n";
 			y->m_left = newN;
+			std::cout << "Y A GAUCHE INSERT: " << y->m_left->p->first << "\n";
 		}
 		else if (newN->p && _comp(y->p->first, newN->p->first))   //else if (newN->key > y->key)
 		{
 			y->m_right = newN;
 		//	std::cout << "A DROITE\n";
 		}
-		else
+		/*else
 		{
 			 y->m_right = newN;
 			 newN->m_left = NULLnode;
 			 newN->m_right = NULLnode;
 			 newN->m_color = s_red;
-		}
+		}*/
 			/*Node<T>	*tmp = _root;
 			while (1)
 			{
@@ -309,13 +311,13 @@ class	RBT
 			}
 		}*/
 		_size++;
-		std::cout << "END INSERT NEW->first: " << newN->p->first << "\n";
+		//std::cout << "END INSERT NEW->first: " << newN->p->first << "\n";
 		if (newN->m_parent == NULL)
 			return;
 		if (newN->m_parent->m_parent == NULL)
 			return;
 	//	std::cout << "NEWN PARENT COLOR FIN INSERT: " << newN->m_parent->m_parent->p.first << "\n";
-		std::cout << "END INSERT NEW->second: " << newN->p->first << "\n";
+		//std::cout << "END INSERT NEW->second: " << newN->p->first << "\n";
 		insertionFix(newN);
 	}
 
@@ -340,13 +342,15 @@ class	RBT
 					tmp->m_color = s_red;
 					x = x->m_parent;
 				}
-				else if (tmp->m_right->m_color == s_black)
+				else
 				{
-					tmp->m_left->m_color = s_black;
-					tmp->m_color = s_red;
-					rightRotate(tmp);
-					tmp = x->m_parent->m_right;
-				}
+					if (tmp->m_right->m_color == s_black)
+					{
+						tmp->m_left->m_color = s_black;
+						tmp->m_color = s_red;
+						rightRotate(tmp);
+						tmp = x->m_parent->m_right;
+					}
 				//else
 				//{
 					tmp->m_color = x->m_parent->m_color;
@@ -354,6 +358,7 @@ class	RBT
 					tmp->m_right->m_color = s_black;
 					leftRotate(x->m_parent);
 					x = _root;
+				}
 				//}
 			 }
 			else if (x == x->m_parent->m_right)
@@ -367,25 +372,28 @@ class	RBT
 					rightRotate(x->m_parent);
 					tmp = x->m_parent->m_left;
 				}
-				if (tmp->m_right && tmp->m_right->m_color == s_black && tmp->m_left->m_color == s_black)
+				if (tmp->m_right->m_color == s_black && tmp->m_left->m_color == s_black)
 				{
 					tmp->m_color = s_red;
 					x = x->m_parent;
 				}
-				else if (tmp->m_left->m_color == s_black)
+				else
 				{
-					tmp->m_right->m_color = s_black;
-					tmp->m_color = s_red;
-					leftRotate(tmp);
-					tmp = x->m_parent->m_left;
-				}
+					if (tmp->m_left->m_color == s_black)
+					{
+						tmp->m_right->m_color = s_black;
+						tmp->m_color = s_red;
+						leftRotate(tmp);
+						tmp = x->m_parent->m_left;
+					}
 				//else if (tmp->m_left)
 			//	{
-				tmp->m_color = x->m_parent->m_color;
-				x->m_parent->m_color = s_black;
-				tmp->m_left->m_color = s_black;
-				rightRotate(x->m_parent);
-				x = _root;
+					tmp->m_color = x->m_parent->m_color;
+					x->m_parent->m_color = s_black;
+					tmp->m_left->m_color = s_black;
+					rightRotate(x->m_parent);
+					x = _root;
+				}
 			//	}
 			 }
 		 }
@@ -395,8 +403,8 @@ class	RBT
 
 	void	swap(Node<T> *x, Node<T> *y)
 	{
-		if (y == NULL)
-			y = NULLnode;
+		//if (y == NULL)
+		//	y = NULLnode;
 		if (x->m_parent == NULL)
 		{
 			_root = y;
@@ -554,19 +562,19 @@ class	RBT
 			//	std::cout << "y apres minTree: " << y->m_right << "\n";
 				y_color = y->m_color;
 			//	std::cout << "Y COLOR DANS DELETE: " << y_color << "\n";
-				if (y->m_right == NULL)
-				{
+			//	if (y->m_right == NULL)
+			//	{
 			//		std::cout << "y->right = NULL\n";
-					y->m_right = NULLnode;
+			//		y->m_right = NULLnode;
 					//y->m_right->m_parent = y;
-				}
+			//	}
 				x = y->m_right;
 			//	std::cout << "DEL/tmp debut gros while: " << tmp->p->first << "\n";
 				//std::cout << "x debut gros while: " << x->key << "\n";
 			//	std::cout << "y debut gros while: " << y->p->first << "\n";
 			//	std::cout << "Parent de y debut gros while: " << y->m_parent->p->first << "\n";
 				//std::cout << "Parent de y debut gros while: " << y->m_parent->key << "\n";
-				if (y->m_parent->p->first == tmp->p->first)
+				if (y->m_parent == tmp)
 				{
 					//std::cout << "1111 if dans ELSE: x->m_parent: " << x->m_parent->key << "\n";
 					x->m_parent = y;
@@ -840,11 +848,12 @@ class	RBT
 		NULLnode->m_parent = NULL;
 		NULLnode->m_left = NULL;
 		NULLnode->m_right = NULL;
-		_root = newNode();
-		_root->m_parent = NULL;
-		_root->m_left = NULLnode;
-		_root->m_right = NULLnode;
-		_root->m_color = s_black;
+		_root = NULLnode;
+		//_root = newNode();
+		//_root->m_parent = NULL;
+		//_root->m_left = NULLnode;
+		//_root->m_right = NULLnode;
+		//_root->m_color = s_black;
 		//_last = newNode();
 		//_last->m_left = NULLnode;
 		//_last->m_right = NULLnode;
