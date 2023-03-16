@@ -1,0 +1,296 @@
+---------- START push_back test ----------
+
+FT stats: 
+actual capacity for ft: 3
+actual size for ft: 3
+
+
+ADD number 2: 
+
+
+FT stats: 
+new capacity for ft: 6
+new size for ft: 4
+
+
+FT: 1
+FT: 1
+FT: 1
+FT: 2
+---------- END push_back test ----------
+
+
+
+
+---------- START pop_back test ----------
+remove two last elements: 
+
+FT stats: 
+new capacity for ft: 6
+new size for ft: 2
+
+
+FT: 1
+FT: 1
+---------- END pop_back test ----------
+
+
+
+
+---------- START clear test ----------
+cleaning all elements: 
+
+
+FT stats: 
+new capacity for ft: 6
+new size for ft: 0
+
+
+---------- END clear test ----------
+
+
+
+
+---------- START push_back test 2 ----------
+
+FT stats: 
+actual capacity for ft: 6
+actual size for ft: 0
+
+
+ADD multiple numbers: 
+
+
+FT stats: 
+new capacity for ft: 12
+new size for ft: 11
+
+
+FT: 67
+FT: 371
+FT: 849
+FT: 140
+FT: 863
+FT: 657
+FT: 812
+FT: 242
+FT: 120
+FT: 309
+FT: 999
+---------- END push_back test 2 ----------
+
+
+
+
+---------- START resize test ----------
+
+
+
+FT stats: 
+new capacity for ft: 12
+new size for ft: 3
+
+
+FT: 67
+FT: 371
+FT: 849
+---------- END resize test ----------
+
+
+
+
+---------- START resize test 2 ----------
+
+
+
+FT stats: 
+new capacity for ft: 20
+new size for ft: 20
+
+
+FT: 67
+FT: 371
+FT: 849
+FT: 0
+FT: 0
+FT: 0
+FT: 0
+FT: 0
+FT: 0
+FT: 0
+FT: 0
+FT: 0
+FT: 0
+FT: 0
+FT: 0
+FT: 0
+FT: 0
+FT: 0
+FT: 0
+FT: 0
+---------- END resize test 2 ----------
+
+
+
+
+---------- START max_size test ----------
+
+FT max_size: 2305843009213693951
+
+---------- END max_size test ----------
+
+
+
+
+---------- START swap && at test ----------
+
+TMP: 1
+TMP: 1
+TMP: 1
+TMP: 1
+TMP: 1
+
+
+FT: 2
+FT: 2
+FT: 2
+FT: 2
+FT: 2
+
+SWAPPING !!!
+
+TMP: 2
+TMP: 2
+TMP: 2
+TMP: 2
+TMP: 2
+
+
+FT: 1
+FT: 1
+FT: 1
+FT: 1
+FT: 1
+
+Try to access index 999: vector::_M_range_check: __n (which is 999) >= this->size() (which is 5)
+
+---------- END swap && at test ----------
+
+
+
+
+---------- START front && back test ----------
+
+FT: 479
+FT: 753
+FT: 723
+FT: 100
+FT: 341
+
+FT FRONT: 479
+
+FT BACK: 341
+
+---------- END front && back test ----------
+
+
+
+
+---------- START empty test ----------
+
+FT: 479
+FT: 753
+FT: 723
+FT: 100
+FT: 341
+
+FT empty: 0
+
+CLEANING: 
+
+FT empty: 1
+
+---------- END empty test ----------
+
+
+
+
+---------- START ITERATOR TEST ----------
+
+FT: 1
+FT: 595
+FT: 641
+FT: 498
+FT: 58
+FT: 10
+FT: 836
+FT: 996
+FT: 190
+FT: 130
+FT: 381
+
+begin(): 
+FT: 1
+
+end(): 
+FT: 0
+
+rbegin(): 
+FT: 381
+
+rend(): 
+FT: 81
+
+insert() 999 at 3 position: 
+
+FT: 1
+FT: 595
+FT: 999
+FT: 641
+FT: 498
+FT: 58
+FT: 10
+FT: 836
+FT: 996
+FT: 190
+FT: 130
+FT: 381
+
+erase() the second element: 
+
+FT: 1
+FT: 999
+FT: 641
+FT: 498
+FT: 58
+FT: 10
+FT: 836
+FT: 996
+FT: 190
+FT: 130
+FT: 381
+
+erase() 2 to 8 elements: 
+
+FT: 1
+FT: 190
+FT: 130
+FT: 381
+
+insert() 999 2 to 8 positions: 
+
+FT: 1
+FT: 190
+FT: 999
+FT: 999
+FT: 999
+FT: 999
+FT: 999
+FT: 999
+FT: 999
+FT: 999
+FT: 130
+FT: 381
+
+assign() 1111 for 5 elements: 
+
