@@ -6,11 +6,11 @@
 #    By: jtaravel <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/07/19 13:36:18 by jtaravel          #+#    #+#              #
-#    Updated: 2023/01/31 15:29:14 by jtaravel         ###   ########.fr        #
+#    Updated: 2023/03/17 18:21:13 by jtaravel         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-FILES =	testmain.cpp \
+FILES =	stack_main.cpp \
 
 S_PATH  =       srcs/
 O_PATH  =       ./
