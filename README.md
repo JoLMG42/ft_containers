@@ -1,4 +1,4 @@
-                                                        ft_containers
+                                                 ft_containers
 
 Possible implementation of some containers from the standard library C++ (C98):
 
